@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: M_DebugCube
+  m_Name: M_DebugCube_Top
   m_Shader: {fileID: 4800000, guid: 8bc8fed34df844449bbd3387ffbbd293, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -44,7 +44,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: b5eb3303a8416f3429991a67e31bfd62, type: 3}
+        m_Texture: {fileID: 2800000, guid: 30236aa65131f51408c17474262dd349, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
