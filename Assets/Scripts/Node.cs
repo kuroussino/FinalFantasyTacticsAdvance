@@ -14,6 +14,9 @@ public class Node
     public float DistanceFromSource = float.MaxValue;
     public Node PreviousNode = null;
 
+    //A*
+    public float HeuristicValue = float.MaxValue;
+
     public Node(int value) 
     {
         this.value = value;

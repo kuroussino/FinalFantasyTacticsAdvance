@@ -8,6 +8,7 @@ using UnityEngine;
 public class Graph
 {
     private Dictionary<int, Node> nodes = new Dictionary<int, Node>();
+    public int Count { get { return nodes.Count; } }
     
     //public Dictionary<int, Node> Nodes { get { return nodes; } }
 
@@ -142,7 +143,7 @@ public class Graph
 
             foreach (var edge in currentNode.Edges)
             {
-                float newDistance = currentNode.DistanceFromSource + edge.Lenght;
+                float newDistance = currentNode.DistanceFromSource + edge.Weight;
 
                 if (newDistance < edge.ConnectedNode.DistanceFromSource)
                 {
@@ -150,6 +151,67 @@ public class Graph
                     edge.ConnectedNode.PreviousNode = currentNode;
 
                     priorityQueue.Enqueue(edge.ConnectedNode, newDistance);
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<Node> A_Star(int startNodeValue, int endNodeValue)
+    {
+        if (!nodes.ContainsKey(startNodeValue) || !nodes.ContainsKey(endNodeValue))
+        {
+            Debug.Log("Start, end or both nodes does not exist in the graph");
+            return null;
+        }
+
+        Node startNode = nodes[startNodeValue];       
+        Node endNode = nodes[endNodeValue];
+
+        foreach (Node node in nodes.Values)
+        {
+            node.DistanceFromSource = float.MaxValue;
+            //node.HeuristicValue = Utils.ManhattanDistance();
+            node.PreviousNode = null;
+        }
+
+        startNode.DistanceFromSource = 0f;
+        endNode.HeuristicValue = 0f;
+
+        PriorityQueue priorityQueue = new PriorityQueue();
+        priorityQueue.Enqueue(startNode, 0);
+
+        while (priorityQueue.Count > 0)
+        {
+            //you can initialize heuristic there or in the foreach, it depends
+            Node currentNode = priorityQueue.Dequeue();
+
+            if (currentNode.Value == endNodeValue)
+            {
+                List<Node> shortestPath = new List<Node>();
+                Node node = currentNode;
+
+                while (node != null)
+                {
+                    shortestPath.Insert(0, node);
+                    node = node.PreviousNode;
+                }
+
+                return shortestPath;
+            }
+
+            foreach (var edge in currentNode.Edges)
+            {
+                float newDistance = currentNode.DistanceFromSource + edge.Weight; //per ff si aggiunge il movement cost dipendentemente dal tipo di terreno che vogliamo attraversare
+                //currentNode.HeuristicValue = Utils.ManhattanDistance(); --> float newHeuristic
+
+                if (newDistance < edge.ConnectedNode.DistanceFromSource)
+                {
+                    edge.ConnectedNode.DistanceFromSource = newDistance;
+                    //edge.ConnectedNode.HeuristicValue += newHeuristic;
+                    edge.ConnectedNode.PreviousNode = currentNode;
+
+                    //priorityQueue.Enqueue(edge.ConnectedNode, newDistance + newHeuristic);
                 }
             }
         }
@@ -192,6 +254,33 @@ public class PriorityQueue
         }
 
         return item;
+    }
+}
+
+public class Utils
+{
+    ///<summary>
+    ///Calculates the Manhattan distance between the two points.
+    ///</summary>
+    ///<param name="x1">The first x coordinate.</param>
+    ///<param name="x2">The second x coordinate.</param>
+    ///<param name="y1">The first y coordinate.</param>
+    ///<param name="y2">The second y coordinate</param>
+    public static float ManhattanDistance(float x1, float x2, float y1, float y2)
+    {
+        return Mathf.Abs(x1 - x2) + Mathf.Abs(y1 - y2);
+    }
+
+    ///<summary>
+    ///Calculates the Manhattan distance between the two points.
+    ///</summary>
+    ///<param name="x1">The first x coordinate.</param>
+    ///<param name="x2">The second x coordinate.</param>
+    ///<param name="y1">The first y coordinate.</param>
+    ///<param name="y2">The second y coordinate</param>
+    public static int ManhattanDistance(int x1, int x2, int y1, int y2)
+    {
+        return Mathf.Abs(x1 - x2) + Mathf.Abs(y1 - y2);
     }
 }
 
