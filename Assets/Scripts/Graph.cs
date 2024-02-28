@@ -165,7 +165,7 @@ public class Graph
             return null;
         }
 
-        Node startNode = nodes[startNodeValue];       
+        Node startNode = nodes[startNodeValue];
         Node endNode = nodes[endNodeValue];
 
         foreach (Node node in nodes.Values)
