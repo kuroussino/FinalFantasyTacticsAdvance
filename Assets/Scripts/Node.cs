@@ -5,7 +5,8 @@ using UnityEngine;
 public class Node : MonoBehaviour
 {
     //Tile (Monobehaviour)
-    [SerializeField] Tile relatedTile = null;
+    [SerializeField] private Tile relatedTile = null;
+    public Tile RelatedTile { get { return relatedTile; } }
 
     //Graph (Pure)
     private int value;

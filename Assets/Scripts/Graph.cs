@@ -171,12 +171,12 @@ public class Graph
         foreach (Node node in nodes.Values)
         {
             node.DistanceFromSource = float.MaxValue;
-            //node.HeuristicValue = Utils.ManhattanDistance();
+            node.HeuristicValue = float.MaxValue; //tbr
             node.PreviousNode = null;
         }
 
         startNode.DistanceFromSource = 0f;
-        endNode.HeuristicValue = 0f;
+        endNode.HeuristicValue = Utils.ManhattanDistance(startNode.RelatedTile.transform.position.x, startNode.RelatedTile.transform.position.z, endNode.RelatedTile.transform.position.x, endNode.RelatedTile.transform.position.z);
 
         PriorityQueue priorityQueue = new PriorityQueue();
         priorityQueue.Enqueue(startNode, 0);
@@ -204,14 +204,15 @@ public class Graph
             {
                 float newDistance = currentNode.DistanceFromSource + edge.Weight; //per ff si aggiunge il movement cost dipendentemente dal tipo di terreno che vogliamo attraversare
                 //currentNode.HeuristicValue = Utils.ManhattanDistance(); --> float newHeuristic
+                float newHeuristic = Utils.ManhattanDistance(edge.ConnectedNode.RelatedTile.transform.position.x, edge.ConnectedNode.RelatedTile.transform.position.z, endNode.RelatedTile.transform.position.x, endNode.RelatedTile.transform.position.z);
 
                 if (newDistance < edge.ConnectedNode.DistanceFromSource)
                 {
                     edge.ConnectedNode.DistanceFromSource = newDistance;
-                    //edge.ConnectedNode.HeuristicValue += newHeuristic;
+                    edge.ConnectedNode.HeuristicValue = newHeuristic;
                     edge.ConnectedNode.PreviousNode = currentNode;
 
-                    //priorityQueue.Enqueue(edge.ConnectedNode, newDistance + newHeuristic);
+                    priorityQueue.Enqueue(edge.ConnectedNode, newDistance + newHeuristic);
                 }
             }
         }
