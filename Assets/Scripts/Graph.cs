@@ -7,54 +7,55 @@ using UnityEngine;
 
 public class Graph
 {
-    private Dictionary<int, Node> nodes = new Dictionary<int, Node>();
+    //private Dictionary<int, Node> nodes = new Dictionary<int, Node>();
+    private List<Node> nodes = new List<Node>();
     public int Count { get { return nodes.Count; } }
-    
+
     //public Dictionary<int, Node> Nodes { get { return nodes; } }
 
-    public void AddNode(int nodeValue)
-    {
-        if (!nodes.ContainsKey(nodeValue))
-        {
-            Node newNode = new Node(nodeValue);
-            nodes[nodeValue] = newNode;
-        }
-        else { Debug.LogWarning($"A node with value {nodeValue} aready exists in the graph"); }
-    }
+    //public void AddNode(int nodeValue)
+    //{
+    //    if (!nodes.ContainsKey(nodeValue))
+    //    {
+    //        Node newNode = new Node(nodeValue);
+    //        nodes[nodeValue] = newNode;
+    //    }
+    //    else { Debug.LogWarning($"A node with value {nodeValue} aready exists in the graph"); }
+    //}
 
-    public void RemoveNode(int nodeValue) 
-    {
-        if (nodes.ContainsKey(nodeValue))
-        {
-            Node nodeToRemove = nodes[nodeValue];
+    //public void RemoveNode(int nodeValue) 
+    //{
+    //    if (nodes.ContainsKey(nodeValue))
+    //    {
+    //        Node nodeToRemove = nodes[nodeValue];
 
-            foreach (Node otherNode in nodes.Values)
-            {
-                otherNode.RemoveEdge(nodeToRemove);
-            }
+    //        foreach (Node otherNode in nodes.Values)
+    //        {
+    //            otherNode.RemoveEdge(nodeToRemove);
+    //        }
 
-            nodes.Remove(nodeValue);
-        }
-        else { Debug.LogWarning($"A node with value {nodeValue} does not exist in the graph"); }
-    }
+    //        nodes.Remove(nodeValue);
+    //    }
+    //    else { Debug.LogWarning($"A node with value {nodeValue} does not exist in the graph"); }
+    //}
 
-    public void AddEdge(int nodeValue_a, int nodeValue_b, float lenght, bool isBidirectional = true)
-    {
-        if(nodes.ContainsKey(nodeValue_a) && nodes.ContainsKey(nodeValue_b)) 
-        {
-            nodes[nodeValue_a].AddEdge(nodes[nodeValue_b], lenght, isBidirectional);
-        }
-        else { Debug.LogWarning("One or both nodes does not exist in the graph"); }
-    }
+    //public void AddEdge(int nodeValue_a, int nodeValue_b, float lenght, bool isBidirectional = true)
+    //{
+    //    if(nodes.ContainsKey(nodeValue_a) && nodes.ContainsKey(nodeValue_b)) 
+    //    {
+    //        nodes[nodeValue_a].AddEdge(nodes[nodeValue_b], lenght, isBidirectional);
+    //    }
+    //    else { Debug.LogWarning("One or both nodes does not exist in the graph"); }
+    //}
 
-    public void RemoveEdge(int nodeValue_a, int nodeValue_b)
-    {
-        if (nodes.ContainsKey(nodeValue_b) && nodes.ContainsKey(nodeValue_a))
-        {
-            nodes[nodeValue_a].RemoveEdge(nodes[nodeValue_b]);
-        }
-        else { Debug.LogWarning($"One or both nodes does not exist in the graph"); }
-    }
+    //public void RemoveEdge(int nodeValue_a, int nodeValue_b)
+    //{
+    //    if (nodes.ContainsKey(nodeValue_b) && nodes.ContainsKey(nodeValue_a))
+    //    {
+    //        nodes[nodeValue_a].RemoveEdge(nodes[nodeValue_b]);
+    //    }
+    //    else { Debug.LogWarning($"One or both nodes does not exist in the graph"); }
+    //}
 
     public void PrintGraph(int startNodeValue, Order printOrder = Order.BFS)
     {
@@ -171,12 +172,12 @@ public class Graph
         foreach (Node node in nodes.Values)
         {
             node.DistanceFromSource = float.MaxValue;
-            node.HeuristicValue = float.MaxValue; //tbr
+            node.HeuristicValue = Utils.ManhattanDistance(node.RelatedTile.transform.position.x, node.RelatedTile.transform.position.z, endNode.RelatedTile.transform.position.x, endNode.RelatedTile.transform.position.z); //tbr
             node.PreviousNode = null;
         }
 
         startNode.DistanceFromSource = 0f;
-        endNode.HeuristicValue = Utils.ManhattanDistance(startNode.RelatedTile.transform.position.x, startNode.RelatedTile.transform.position.z, endNode.RelatedTile.transform.position.x, endNode.RelatedTile.transform.position.z);
+        endNode.HeuristicValue = 0f;
 
         PriorityQueue priorityQueue = new PriorityQueue();
         priorityQueue.Enqueue(startNode, 0);
@@ -204,15 +205,14 @@ public class Graph
             {
                 float newDistance = currentNode.DistanceFromSource + edge.Weight; //per ff si aggiunge il movement cost dipendentemente dal tipo di terreno che vogliamo attraversare
                 //currentNode.HeuristicValue = Utils.ManhattanDistance(); --> float newHeuristic
-                float newHeuristic = Utils.ManhattanDistance(edge.ConnectedNode.RelatedTile.transform.position.x, edge.ConnectedNode.RelatedTile.transform.position.z, endNode.RelatedTile.transform.position.x, endNode.RelatedTile.transform.position.z);
+                //float newHeuristic = Utils.ManhattanDistance(edge.ConnectedNode.RelatedTile.transform.position.x, edge.ConnectedNode.RelatedTile.transform.position.z, endNode.RelatedTile.transform.position.x, endNode.RelatedTile.transform.position.z);
 
                 if (newDistance < edge.ConnectedNode.DistanceFromSource)
                 {
                     edge.ConnectedNode.DistanceFromSource = newDistance;
-                    edge.ConnectedNode.HeuristicValue = newHeuristic;
                     edge.ConnectedNode.PreviousNode = currentNode;
 
-                    priorityQueue.Enqueue(edge.ConnectedNode, newDistance + newHeuristic);
+                    priorityQueue.Enqueue(edge.ConnectedNode, newDistance + edge.ConnectedNode.HeuristicValue); //tbr
                 }
             }
         }

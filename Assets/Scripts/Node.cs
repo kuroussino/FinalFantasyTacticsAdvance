@@ -44,7 +44,7 @@ public class Node : MonoBehaviour
     }
     #endregion
 
-    public Node(int value) 
+    public Node(int value)
     {
         this.value = value;
     }
