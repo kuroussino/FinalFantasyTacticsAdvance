@@ -11,7 +11,10 @@ public class Node : MonoBehaviour
 
     [SerializeField, Min(1)] float cost = 1;
     [SerializeField] LayerMask sampleMask;
+    [SerializeField] float blockScale;
     int occupationId = -1;
+
+    [SerializeField] SpriteRenderer highlightedSprite;
 
     public int Value { get { return value; } }
     public List<Edge> Edges { get { return edges; } }
@@ -83,7 +86,7 @@ public class Node : MonoBehaviour
 
     private void BindToNeighbor(Vector3 direction)
     {
-        if (Physics.Raycast(transform.position + direction + Vector3.up * float.MaxValue / 2, Vector3.down, out RaycastHit hit, float.MaxValue, sampleMask))
+        if (Physics.Raycast(transform.position + direction * blockScale + Vector3.up * float.MaxValue / 2, Vector3.down, out RaycastHit hit, float.MaxValue, sampleMask))
         {
             if (hit.transform.gameObject.TryGetComponent(out Node tile))
             { 
@@ -95,6 +98,17 @@ public class Node : MonoBehaviour
     public float CalculateStepHeight(Node tileB) //pivot must be on top of the cube mesh and character at its foot
     {
         return Mathf.Abs(tileB.transform.position.y - transform.position.y);
+    }
+
+    public void HighlightNode()
+    {
+        highlightedSprite.color = Color.yellow;
+        highlightedSprite.gameObject.SetActive(true);
+    }
+
+    public void LoseHighlight()
+    {
+        highlightedSprite.gameObject.SetActive(false);
     }
 
     //public void AddEdge(Node otherNode, float leght, bool isBidirectional = true)
