@@ -883,7 +883,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.06666667, g: 0.06666667, b: 0.06666667, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -908,7 +908,7 @@ Camera:
   far clip plane: 100
   field of view: 60
   orthographic: 1
-  orthographic size: 6
+  orthographic size: 5
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -10699,7 +10699,7 @@ Camera:
   far clip plane: 100
   field of view: 60
   orthographic: 1
-  orthographic size: 6
+  orthographic size: 5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -10724,7 +10724,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.09904577, y: -0.89239913, z: 0.23911765, w: 0.3696438}
-  m_LocalPosition: {x: 5, y: 5, z: 3.05}
+  m_LocalPosition: {x: 13, y: 17, z: 7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13291,6 +13291,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5052671034485629568, guid: 411d2ec21823e9f49a1191af11d8a30b, type: 3}
+      propertyPath: cost
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8678363181353152279, guid: 411d2ec21823e9f49a1191af11d8a30b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -13410,12 +13414,13 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a877198f4a671714db0602213d3adc1a, type: 3}
   - {fileID: 21300000, guid: 29642593f48a2b64087e78afa1f9d6cd, type: 3}
   - {fileID: 21300000, guid: bb76b6c7c462fdc45ac9e3cd7b2bb3b9, type: 3}
+  - {fileID: 21300000, guid: 29642593f48a2b64087e78afa1f9d6cd, type: 3}
   backSprites:
   - {fileID: 21300000, guid: 3a72de667e1ed2f4e881ada15bc000ec, type: 3}
   - {fileID: 21300000, guid: 098e8b7bdecdda94cabe696eb64c2727, type: 3}
   - {fileID: 21300000, guid: 0bb83f17466842140a779ef6b4bce774, type: 3}
+  - {fileID: 21300000, guid: 098e8b7bdecdda94cabe696eb64c2727, type: 3}
   spritesScrollTime: 0.3
-  spriteRenderer: {fileID: 1847739064}
 --- !u!65 &1144951351
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -13435,7 +13440,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.5, y: 1.5, z: 0.5}
+  m_Size: {x: 0.5, y: 0.5, z: 0.5}
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!4 &1144951352
 Transform:
@@ -13446,7 +13451,7 @@ Transform:
   m_GameObject: {fileID: 1144951348}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -2, y: 3, z: -8}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13466,7 +13471,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4b0b9a9a5d41de4a88620f59e991882, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 0.3
+  walkDuration: 0.35
+  jumpDuration: 0.45
+  sampleMask:
+    serializedVersion: 2
+    m_Bits: 64
+  walkCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  jumpCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  jumpAnimationHeight: 2
+  attackRange: 2
+  stepHeight: 1
 --- !u!1001 &1147765037
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19538,6 +19598,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5052671034485629568, guid: 411d2ec21823e9f49a1191af11d8a30b, type: 3}
+      propertyPath: cost
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8678363181353152279, guid: 411d2ec21823e9f49a1191af11d8a30b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -21752,9 +21816,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1807588393}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: -0.2, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.049999997, z: 0}
+  m_LocalScale: {x: 1.5, y: 1.5000006, z: 1.5000006}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1144951352}
@@ -21801,7 +21865,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.8627451}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -21816,17 +21880,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 790799640685043235, guid: 3a70ba73c5f7977459cb7d5832e46c74, type: 3}
   m_PrefabInstance: {fileID: 8633286029767255671}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1815360759 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7863481568082315386, guid: 3a70ba73c5f7977459cb7d5832e46c74, type: 3}
-  m_PrefabInstance: {fileID: 8633286029767255671}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f9f49b0e001010e48a90183431e2bfca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1826437234
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22249,10 +22302,10 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1847739062}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.92387956, z: 0, w: 0.38268343}
-  m_LocalPosition: {x: 0, y: 1.25, z: 0}
+  m_LocalRotation: {x: -0, y: -0.92387927, z: -0, w: 0.3826842}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 8, y: 10, z: 8}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1144951352}
   m_LocalEulerAnglesHint: {x: 0, y: -135, z: 0}
@@ -22296,8 +22349,8 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 3a72de667e1ed2f4e881ada15bc000ec, type: 3}
+  m_SortingOrder: 5
+  m_Sprite: {fileID: 21300000, guid: 29642593f48a2b64087e78afa1f9d6cd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -23379,7 +23432,7 @@ GameObject:
   - component: {fileID: 1934474751}
   - component: {fileID: 1934474750}
   m_Layer: 0
-  m_Name: TEST
+  m_Name: Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23402,9 +23455,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   mainCamera: {fileID: 43557062}
-  cameraFollowDuration: 0.05
+  cameraFollowDuration: 0.15
   selectedCharacter: {fileID: 1144951353}
-  start: {fileID: 1815360759}
   stepHeight: 1
   range: 2
 --- !u!4 &1934474751
@@ -24091,7 +24143,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4b0b9a9a5d41de4a88620f59e991882, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 0.5
+  walkDuration: 0
+  jumpDuration: 0
+  sampleMask:
+    serializedVersion: 2
+    m_Bits: 0
+  walkCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  jumpCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  jumpAnimationHeight: 0
+  attackRange: 0
+  stepHeight: 0
 --- !u!1001 &1974199478
 PrefabInstance:
   m_ObjectHideFlags: 0

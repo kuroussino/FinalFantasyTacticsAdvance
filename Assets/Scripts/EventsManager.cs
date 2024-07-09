@@ -9,6 +9,7 @@ public class EventsManager
     #endregion
 
     #region Public
+    public static Action AllNodesRegistered;
     public static Action<Node[]> NodeClicked;
     #endregion
 

@@ -100,9 +100,9 @@ public class Node : MonoBehaviour
         return Mathf.Abs(tileB.transform.position.y - transform.position.y);
     }
 
-    public void HighlightNode()
+    public void HighlightNode(Color color)
     {
-        highlightedSprite.color = Color.yellow;
+        highlightedSprite.color = color;
         highlightedSprite.gameObject.SetActive(true);
     }
 

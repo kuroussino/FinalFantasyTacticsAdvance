@@ -9,7 +9,8 @@ public class SpriteManager : MonoBehaviour
     [SerializeField] Sprite[] backSprites;
     [SerializeField] float spritesScrollTime;
     float spritesTimer;
-    [SerializeField] SpriteRenderer spriteRenderer;
+    SpriteRenderer spriteRenderer;
+    Character character;
     int currSpriteIndex;
     Sprite[] currSprites;
     #endregion
@@ -20,6 +21,12 @@ public class SpriteManager : MonoBehaviour
     #endregion
 
     #region Monobehaviour
+    private void Awake()
+    {
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        character = GetComponent<Character>();
+    }
+
     private void Start()
     {
         currSprites = backSprites;
@@ -28,6 +35,39 @@ public class SpriteManager : MonoBehaviour
         UpdateSprite();
     }
     private void Update()
+    {
+        SpriteTimer();
+    }
+    #endregion
+
+    #region Methods
+    public void UpdateSpriteOrientation(CharacterDirection dir)
+    {
+        transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y - character.transform.rotation.eulerAngles.y, 0f);
+
+        switch (dir)
+        {
+            case CharacterDirection.FRONT:
+                spriteRenderer.flipX = true;
+                currSprites = frontSprites;
+                break;
+            case CharacterDirection.RIGHT:
+                spriteRenderer.flipX = false;
+                currSprites = frontSprites;
+                break;
+            case CharacterDirection.LEFT:
+                spriteRenderer.flipX = true;
+                currSprites = backSprites;
+                break;
+            case CharacterDirection.BACK:
+                spriteRenderer.flipX = false;
+                currSprites = backSprites;
+                break;
+        }
+        //Debug.Log("Current spritePack: " + currSprites);
+    }
+
+    private void SpriteTimer()
     {
         if (spritesTimer > 0f)
         {
@@ -38,13 +78,6 @@ public class SpriteManager : MonoBehaviour
             spritesTimer = spritesScrollTime;
             UpdateSprite();
         }
-    }
-    #endregion
-
-    #region Methods
-    public void UpdateOrientation(float characterYRot)
-    {
-        transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y - characterYRot, 0f);
     }
 
     private void UpdateSprite()
