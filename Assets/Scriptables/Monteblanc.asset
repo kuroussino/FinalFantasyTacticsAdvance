@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4788b7b210433c6468c25e72399b6f11, type: 3}
+  m_Name: Monteblanc
+  m_EditorClassIdentifier: 
+  characterName: 
+  characterClass: 
+  baseMaxHp: 0
+  baseMaxMp: 0
+  move: 0
+  jump: 0
+  evade: 0
+  weaponAtk: 0
+  weaponDef: 0
+  maicPow: 0
+  magicRes: 0
+  speed: 0
+  frontIdle: []
+  backIdle: []

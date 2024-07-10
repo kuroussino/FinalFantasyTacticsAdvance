@@ -11,6 +11,8 @@ public class EventsManager
     #region Public
     public static Action AllNodesRegistered;
     public static Action<Node[]> NodeClicked;
+    public static Action TurnChanged;
+    public static Action<CharacterDirection> DirectionChosen;
     #endregion
 
     #endregion

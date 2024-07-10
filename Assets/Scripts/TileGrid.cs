@@ -5,6 +5,7 @@ using DG.Tweening;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Burst.CompilerServices;
 using Unity.VisualScripting;
+using static UnityEngine.UI.ContentSizeFitter;
 
 public class TileGrid : Singleton<TileGrid>
 {
@@ -18,15 +19,21 @@ public class TileGrid : Singleton<TileGrid>
 
     [SerializeField] Camera mainCamera;
     [SerializeField] float cameraFollowDuration;
-    [SerializeField] Character selectedCharacter;
-    [SerializeField] float stepHeight;
-    [SerializeField] float range;
+    [SerializeField] Character[] availableCharacters;
+    Character selectedCharacter;
+    int characterIndex;
+    //[SerializeField] float stepHeight;
+    //[SerializeField] float range;
+
+    //[SerializeField] Node testStart;
+    //[SerializeField] Node testEnd;
 
     Node currentHighlightedNode;
     #endregion
 
     #region Public
     public Graph MapGrid { get { return mapGrid; } }
+    public Character SelectedCharacter { get { return selectedCharacter; } }
     #endregion
 
     #endregion
@@ -34,15 +41,16 @@ public class TileGrid : Singleton<TileGrid>
     #region Monobehaviour
     private IEnumerator Start()
     {
+        selectedCharacter = availableCharacters[0];
+        characterIndex = 0;
+
         yield return new WaitForSeconds(0.5f);
 
         currentHighlightedNode = null;
 
         EventsManager.AllNodesRegistered.Invoke();
 
-        //Node[] path = grid.GetPath(start, end, 0, stepHeight);
-
-        //Node[] path = grid.GetPath(start, end, 0, stepHeight);
+        //Node[] path = mapGrid.GetPath(testStart, testEnd, 0, stepHeight);
 
         //for (int i = 0; i < path.Length; i++)
         //{
@@ -53,15 +61,28 @@ public class TileGrid : Singleton<TileGrid>
 
     private void Update()
     {
-        CheckHighlightedNode();
+        if(!selectedCharacter.Walking)
+            CheckHighlightedNode();
 
         if (Input.GetMouseButtonDown(0) && currentHighlightedNode != null)
         {
+            selectedCharacter.ClearHighlightedNodes();
             Node currStart = selectedCharacter.CurrentOccupiedNode;
-
             //Debug.Log("start: " + currStart.name + " currHighlight: " + currentHighlightedNode.name);
+            EventsManager.NodeClicked(mapGrid.GetPath(currStart, currentHighlightedNode, 0, selectedCharacter.StepHeight));
+            currentHighlightedNode = null;
+        }
 
-            EventsManager.NodeClicked(mapGrid.GetPath(currStart, currentHighlightedNode, 0, stepHeight));
+        if (selectedCharacter.ChoosingDirection)
+        {
+            if (Input.GetKeyDown(KeyCode.UpArrow))
+                EventsManager.DirectionChosen.Invoke(CharacterDirection.FRONT);
+            else if (Input.GetKeyDown(KeyCode.DownArrow))
+                EventsManager.DirectionChosen.Invoke(CharacterDirection.BACK);
+            else if (Input.GetKeyDown(KeyCode.RightArrow))
+                EventsManager.DirectionChosen.Invoke(CharacterDirection.RIGHT);
+            else if (Input.GetKeyDown(KeyCode.LeftArrow))
+                EventsManager.DirectionChosen.Invoke(CharacterDirection.LEFT);
         }
 
         if (selectedCharacter != null)
@@ -77,62 +98,52 @@ public class TileGrid : Singleton<TileGrid>
 
     private void CheckHighlightedNode() 
     {
+        Node hitNode = null;
+
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, float.MaxValue, sampleMask))
-        {
-            Node hitNode = hit.collider.GetComponent<Node>();
+        if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, sampleMask))
+            hitNode = hit.collider.GetComponent<Node>();
 
-            if (selectedCharacter.HighlightedNodes.Contains(hitNode))
-            {
-                if (currentHighlightedNode == null)
-                {
-                    currentHighlightedNode = hitNode;
-                    currentHighlightedNode.HighlightNode(Color.red);
-                }
-
-                if (currentHighlightedNode != hitNode)
-                {
-                    currentHighlightedNode.HighlightNode(Color.cyan);
-                    currentHighlightedNode = hitNode;
-                    hitNode.HighlightNode(Color.red);
-                }
-                //currentHighlightedNode.HighlightNode(Color.cyan);
-            }
-
-            //if (currentHighlightedNode != null)
-            //{
-            //    if(currentHighlightedNode == hitNode)
-            //        return;
-            //    else
-            //        currentHighlightedNode.LoseHighlight();
-            //}
-
-            //currentHighlightedNode = hitNode;
-            //currentHighlightedNode.HighlightNode();
-            //EventsManager.NodeClicked.Invoke(hit.collider.GetComponent<Node>());
-        }
-        else 
+        if (hitNode != null && selectedCharacter.HighlightedNodes.Contains(hitNode))
         {
             if (currentHighlightedNode == null)
-                return;
+            {
+                currentHighlightedNode = hitNode;
+                currentHighlightedNode.HighlightNode(Color.red);
+            }
             else
             {
                 currentHighlightedNode.HighlightNode(Color.cyan);
-                currentHighlightedNode = null;
+                currentHighlightedNode = hitNode;
+                hitNode.HighlightNode(Color.red);
             }
         }
-        //Debug.DrawLine(ray.origin, ray.direction * 50f, Color.red, 50f);
+        else if(currentHighlightedNode != null && selectedCharacter.HighlightedNodes.Contains(currentHighlightedNode))
+        {
+            currentHighlightedNode.HighlightNode(Color.cyan);
+            currentHighlightedNode = null;
+        }
     }
 
     private void CameraFollow()
     {
-        Camera.main.transform.DOMove(selectedCharacter.transform.position + new Vector3(15f, 13f, 15f), cameraFollowDuration).SetEase(Ease.InOutQuad);
+        Camera.main.transform.DOMove(selectedCharacter.transform.position + new Vector3(15f, 13f, 15f), cameraFollowDuration);
     }
 
     public Node[] GetAreaUtility(Node start, float range, float stepHeight)
     {
         return mapGrid.GetArea(start, range, 0, stepHeight);
+    }
+
+    public void PassTurn()
+    {
+        characterIndex++;
+
+        if (characterIndex >= availableCharacters.Length)
+            characterIndex = 0;
+
+        selectedCharacter = availableCharacters[characterIndex];
+        EventsManager.TurnChanged.Invoke();
     }
     #endregion
 }

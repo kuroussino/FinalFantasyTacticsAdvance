@@ -43,7 +43,9 @@ public class SpriteManager : MonoBehaviour
     #region Methods
     public void UpdateSpriteOrientation(CharacterDirection dir)
     {
-        transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y - character.transform.rotation.eulerAngles.y, 0f);
+        //transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y - character.transform.rotation.eulerAngles.y, 0f);
+
+        Debug.Log("dir sprite: " + dir);
 
         switch (dir)
         {
@@ -64,6 +66,8 @@ public class SpriteManager : MonoBehaviour
                 currSprites = backSprites;
                 break;
         }
+
+        spritesTimer = 0f;
         //Debug.Log("Current spritePack: " + currSprites);
     }
 
