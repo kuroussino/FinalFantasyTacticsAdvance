@@ -1,44 +1,45 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
 using DG.Tweening;
-using Unity.VisualScripting;
 using System.Collections.Generic;
 using System.Linq;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class Character : MonoBehaviour
 {
     #region Variables & Properties
 
     #region Local
-    [SerializeField] float walkDuration;
-    float jumpDuration;
-    float pathIterationWait;
-    [SerializeField] LayerMask sampleMask;
+    [Header("Animations")]
     [SerializeField] AnimationCurve walkCurve;
     [SerializeField] AnimationCurve jumpUpCurve;
     [SerializeField] AnimationCurve jumpDownCurve;
-    float jumpAnimationHeight;
-    [SerializeField] float attackRange;
-    [SerializeField] float stepHeight;
+    [SerializeField] float walkAnimationSpeed;
     SpriteManager spriteManager;
-    CharacterDirection currentDirection;
+    float jumpDuration;
+    float pathIterationWait;
+
+    [Header("Pathfinding")]
+    [SerializeField] LayerMask sampleMask;
+    List<Node> highlightedNodes = new List<Node>();
     Node currentOccupiedNode;
     Node currentTargetNode;
-    List<Node> highlightedNodes = new List<Node>();
 
-    bool walking;
-    bool choosingDirection;
-
+    [Header("Gameplay")]
+    [SerializeField] CharacterData characterData;
+    [SerializeField] CharacterDirection startDirection;
+    [SerializeField] int team;
+    CharacterDirection currentDirection;
+    bool isWalking;
+    bool isChoosingDirection;
     #endregion
 
     #region Public
-    public Node CurrentOccupiedNode {  get { return currentOccupiedNode; } }
+    public CharacterData CharacterData { get { return characterData; } }
+    public Node CurrentOccupiedNode { get { return currentOccupiedNode; } }
     public List<Node> HighlightedNodes { get { return highlightedNodes; } }
-    public bool Walking { get { return walking; } }
-    public float StepHeight { get { return stepHeight; } }
-    public bool ChoosingDirection {  get { return choosingDirection; } }
+    public bool IsWalking { get { return isWalking; } }
+    public float Jump { get { return characterData.Jump; } }
+    public bool IsChoosingDirection {  get { return isChoosingDirection; } }
     #endregion
 
     #endregion
@@ -51,10 +52,23 @@ public class Character : MonoBehaviour
 
     private void Start()
     {
-        UpdateDirection(Vector3.forward);
-        Debug.Log("Current direction: " + currentDirection);
+        switch (startDirection)
+        {
+            case CharacterDirection.FRONT:
+                UpdateDirection(Vector3.forward);
+                break;
+            case CharacterDirection.RIGHT:
+                UpdateDirection(Vector3.right);
+                break;
+            case CharacterDirection.LEFT:
+                UpdateDirection(Vector3.left);
+                break;
+            case CharacterDirection.BACK:
+                UpdateDirection(Vector3.back);
+                break;
+        }
 
-        //HighlightNodesInRange();
+        Debug.Log("Current direction: " + currentDirection);
     }
 
     private void OnEnable()
@@ -62,10 +76,8 @@ public class Character : MonoBehaviour
         EventsManager.NodeClicked += MoveTo;
         EventsManager.AllNodesRegistered += GetCurrentOccupiedNode;
         EventsManager.AllNodesRegistered += HighlightNodesInRange;
-
         EventsManager.TurnChanged += GetCurrentOccupiedNode;
         EventsManager.TurnChanged += HighlightNodesInRange;
-
         EventsManager.DirectionChosen += EndTurnDirectionChange;
     }
 
@@ -74,10 +86,8 @@ public class Character : MonoBehaviour
         EventsManager.NodeClicked -= MoveTo;
         EventsManager.AllNodesRegistered -= GetCurrentOccupiedNode;
         EventsManager.AllNodesRegistered -= HighlightNodesInRange;
-
         EventsManager.TurnChanged -= GetCurrentOccupiedNode;
         EventsManager.TurnChanged -= HighlightNodesInRange;
-
         EventsManager.DirectionChosen -= EndTurnDirectionChange;
     }
     #endregion
@@ -89,7 +99,7 @@ public class Character : MonoBehaviour
             return;
 
         //Debug.Log("Clicked node named: " + path[path.Length-1].name);
-        if (walking)
+        if (isWalking)
         {
             Debug.LogWarning("Character still walking!");
             return;
@@ -100,6 +110,8 @@ public class Character : MonoBehaviour
             Debug.LogWarning("Path[] is null!");
             return;
         }
+
+        currentOccupiedNode.SetOccupationId(-1);
         UpdateDirection((path[1].transform.position - transform.position).normalized);
         currentTargetNode = path[path.Length - 1];
         StartCoroutine(PathWalkCoroutine(path));
@@ -107,43 +119,27 @@ public class Character : MonoBehaviour
 
     IEnumerator PathWalkCoroutine(Node[] path)
     {
-        walking = true;
-
+        isWalking = true;
+        TileGrid.Instance.turnState = TurnState.MOVING;
+        currentOccupiedNode.SetOccupationId(-1);
         HighlightTargetNode();
 
         for (int i = 1; i < path.Length; i++) 
         {
-            //if (i != 0)
-            //    UpdateDirection((path[i].transform.position - transform.position).normalized);
-            //else
-            //    UpdateDirection((path[i + 1].transform.position - path[i].transform.position).normalized);
-
             UpdateDirection((path[i].transform.position - transform.position).normalized);
 
             yield return new WaitForEndOfFrame();
 
             if (path[i].transform.position.y != transform.position.y)
             {
-                //transform.DOMove(transform.position + new Vector3(0.85f, jumpAnimationHeight, 0f), jumpDuration).SetEase(jumpCurve);
-                //transform.DOMove(path[i].transform.position + new Vector3(0f, jumpAnimationHeight, 0f), jumpDuration).SetEase(jumpCurve);
-                //transform.DOMove(path[i].transform.position, jumpDuration/2).SetEase(jumpCurve).SetDelay(jumpDuration / 2);
-
-                //jumpAnimationHeight = path[i].transform.position.y + ((path[i].transform.position.y - transform.position.y) / 5);
-
-                //transform.DOMove(transform.position + new Vector3((path[i].transform.position.x - transform.position.x)/1.5f, jumpAnimationHeight, (path[i].transform.position.z - transform.position.z) / 1.5f), jumpDuration).SetEase(jumpCurve);
-                //transform.DOMove(path[i].transform.position + new Vector3(0f, jumpAnimationHeight, 0f), jumpDuration).SetEase(jumpCurve);
-                //transform.DOMove(path[i].transform.position, jumpDuration / 2).SetEase(jumpCurve).SetDelay(jumpDuration / 2);
-
                 int jumpSteps = (int)Mathf.Abs(path[i].transform.position.y - transform.position.y);
 
-                if (stepHeight == jumpSteps)
+                if (characterData.Jump == jumpSteps)
                     jumpSteps--;
 
-                jumpDuration = jumpSteps >= stepHeight - 2  && jumpSteps > 2 ? ((walkDuration / 2f) * stepHeight) / (stepHeight - jumpSteps) : walkDuration;
+                jumpDuration = jumpSteps >= characterData.Jump - 2  && jumpSteps > 2 ? ((walkAnimationSpeed / 2f) * characterData.Jump) / (characterData.Jump - jumpSteps) : walkAnimationSpeed;
 
-                bool jumpDir = transform.position.y < path[i].transform.position.y; 
-                //true = jumping up
-                //false = jumping down
+                bool jumpDir = transform.position.y < path[i].transform.position.y;
 
                 Vector3 origin = transform.position;
                 Vector3 target = path[i].transform.position;
@@ -164,8 +160,8 @@ public class Character : MonoBehaviour
             }
             else
             {
-                transform.DOMove(path[i].transform.position, walkDuration).SetEase(walkCurve);
-                pathIterationWait = walkDuration;
+                transform.DOMove(path[i].transform.position, walkAnimationSpeed).SetEase(walkCurve);
+                pathIterationWait = walkAnimationSpeed;
             }
 
             yield return new WaitForSeconds(pathIterationWait);
@@ -182,20 +178,19 @@ public class Character : MonoBehaviour
         GetCurrentOccupiedNode();
         //HighlightNodesInRange();
 
+        TileGrid.Instance.turnState = TurnState.CHOOSING;
         //yield return new WaitForSeconds(1f);
-        walking = false;
+        isWalking = false;
 
-        choosingDirection = true;
-        //TileGrid.Instance.PassTurn();
+        //choosingDirection = true;
+
+        TileGrid.Instance.PassTurn();
     }
 
     private void UpdateDirection(Vector3 dir)
     {
+        //Debug.Log("Direction: " + transform.rotation.eulerAngles);
         Quaternion lookRot = Quaternion.LookRotation(dir);
-        //transform.rotation = lookRot;
-        //transform.rotation = Quaternion.Euler(0f, lookRot.eulerAngles.y, lookRot.eulerAngles.z);
-        Debug.Log("Direction: " + transform.rotation.eulerAngles);
-
         Quaternion resultRot = transform.rotation * lookRot;
 
         if ((int)resultRot.eulerAngles.y == 0)
@@ -228,10 +223,14 @@ public class Character : MonoBehaviour
 
     private void GetCurrentOccupiedNode()
     {
+        if (TileGrid.Instance.SelectedCharacter != this)
+            return;
+
         if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit, float.MaxValue, sampleMask))
         {
             currentOccupiedNode = hit.collider.GetComponent<Node>();
             Debug.Log("current occupied node: " + currentOccupiedNode.name);
+            currentOccupiedNode.SetOccupationId(team);
         }
 
         //Debug.DrawRay(transform.position + Vector3.up, Vector3.down * 5f, Color.red, 10f);
@@ -242,17 +241,21 @@ public class Character : MonoBehaviour
         if (TileGrid.Instance.SelectedCharacter != this)
             return;
 
-        highlightedNodes = TileGrid.Instance.GetAreaUtility(currentOccupiedNode, attackRange, stepHeight).ToList();
+        highlightedNodes = TileGrid.Instance.GetAreaUtility(currentOccupiedNode, characterData.Move, characterData.Jump).ToList();
 
         Debug.Log("areaResult count: " + highlightedNodes.Count);
 
         foreach (Node node in highlightedNodes)
         {
             if (node != currentOccupiedNode)
-                node.HighlightNode(Color.cyan);
+                node.HighlightNode(TileGrid.Instance.UnselectedTileColor);
             else
                 highlightedNodes.Remove(node);
         }
+
+        TileGrid.Instance.currentHighlightedNode = currentOccupiedNode;
+        currentOccupiedNode.PointNode();
+        Debug.Log("CurrentHighLightedNode: " + TileGrid.Instance.currentHighlightedNode.name);
     }
 
     public void ClearHighlightedNodes()
@@ -267,7 +270,7 @@ public class Character : MonoBehaviour
 
     private void HighlightTargetNode()
     {
-        currentTargetNode.HighlightNode(Color.red);
+        currentTargetNode.HighlightNode(TileGrid.Instance.SelectedTileColor);
     }
 
     private void ClearHighlightTargetNode()
@@ -296,7 +299,7 @@ public class Character : MonoBehaviour
                 break;
         }
 
-        choosingDirection = false;
+        isChoosingDirection = false;
 
         TileGrid.Instance.PassTurn();
     }
@@ -313,5 +316,14 @@ public enum CharacterDirection
 
 public enum TurnState
 {
-    d
+    WAITING,
+    CHOOSING,
+    MOVING
+}
+
+public enum Team
+{
+    ALLY,
+    ENEMY,
+    NEUTRAL
 }

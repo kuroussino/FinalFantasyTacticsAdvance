@@ -5,14 +5,15 @@ public class SpriteManager : MonoBehaviour
     #region Variables & Properties
 
     #region Local
-    [SerializeField] Sprite[] frontSprites;
-    [SerializeField] Sprite[] backSprites;
     [SerializeField] float spritesScrollTime;
+    Sprite[] frontSprites;
+    Sprite[] backSprites;
+    Sprite[] currSprites;
     float spritesTimer;
+    int currSpriteIndex;
+
     SpriteRenderer spriteRenderer;
     Character character;
-    int currSpriteIndex;
-    Sprite[] currSprites;
     #endregion
 
     #region Public
@@ -29,8 +30,12 @@ public class SpriteManager : MonoBehaviour
 
     private void Start()
     {
+        frontSprites = character.CharacterData.FrontIdle;
+        backSprites = character.CharacterData.BackIdle;
+
         currSprites = backSprites;
         spritesTimer = spritesScrollTime;
+
         currSpriteIndex = 0;
         UpdateSprite();
     }

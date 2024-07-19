@@ -12,17 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4788b7b210433c6468c25e72399b6f11, type: 3}
   m_Name: Ezel
   m_EditorClassIdentifier: 
-  characterName: 
-  characterClass: 
-  baseMaxHp: 0
-  baseMaxMp: 0
-  move: 0
-  jump: 0
-  evade: 0
-  weaponAtk: 0
-  weaponDef: 0
-  maicPow: 0
-  magicRes: 0
-  speed: 0
-  frontIdle: []
-  backIdle: []
+  characterName: Ezel Berbier
+  characterClass: Hermetic
+  baseMaxHp: 6
+  baseMaxMp: 8
+  move: 3
+  jump: 3
+  evade: 35
+  weaponAtk: 6
+  weaponDef: 6
+  maicPow: 9
+  magicRes: 10
+  speed: 1
+  frontIdle:
+  - {fileID: 21300000, guid: 48978854eac2d7842b77cf0ba31f92ed, type: 3}
+  - {fileID: 21300000, guid: 1a4aa347e971ff64b8da63bbb763f853, type: 3}
+  - {fileID: 21300000, guid: b854938570fe71a4eaff38356025a999, type: 3}
+  - {fileID: 21300000, guid: 1a4aa347e971ff64b8da63bbb763f853, type: 3}
+  backIdle:
+  - {fileID: 21300000, guid: 98d8e64e0404f184ca3952f537c733fb, type: 3}
+  - {fileID: 21300000, guid: 6d7130b6ad33a794aa0eafaf25ea305a, type: 3}
+  - {fileID: 21300000, guid: 363a54a94e6452240bc38618e90c8d06, type: 3}
+  - {fileID: 21300000, guid: 6d7130b6ad33a794aa0eafaf25ea305a, type: 3}
+  movementSpeed: 0.45

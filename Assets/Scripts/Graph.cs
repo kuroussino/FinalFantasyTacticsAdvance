@@ -330,7 +330,7 @@ public class Graph
         return null;
     }
 
-    public Node[] GetArea(in Node start, float range, int teamId, float stepHeight, bool includeOccupiedTiles = false)
+    public Node[] GetArea(in Node start, float range, int teamId, float stepHeight, bool filterOccupiedTiles = false)
     {
         if (start == null)
         {
@@ -348,7 +348,7 @@ public class Graph
         List<Node> areaNodes = new List<Node>();
         for (int i = 0; i < nodesValues.Length; i++)
         {
-            if (includeOccupiedTiles && nodesValues[i].OccupationId >= 0)
+            if (filterOccupiedTiles && nodesValues[i].OccupationId >= 0)
                 continue;
             areaNodes.Add(nodesValues[i]);
         }
@@ -357,7 +357,7 @@ public class Graph
         return areaNodes.ToArray();
     }
 
-    private Node[] AreaSearch(in Node start, float range, int teamId, float stepHeight, bool includeOccupiedTiles = false)
+    private Node[] AreaSearch(in Node start, float range, int teamId, float stepHeight)
     {
         PriorityQueue<int> availableTiles = new PriorityQueue<int>();
         HashSet<int> exploredNodes = new HashSet<int>();

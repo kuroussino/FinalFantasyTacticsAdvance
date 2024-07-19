@@ -1,4 +1,5 @@
 using CustomSorting;
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +15,16 @@ public class Node : MonoBehaviour
     [SerializeField] float blockScale;
     int occupationId = -1;
 
+    [Header("Misc")]
     [SerializeField] SpriteRenderer highlightedSprite;
+    [SerializeField] SpriteRenderer pointerHighlightedSprite;
+    [SerializeField] SpriteRenderer pointerSprite;
+    [SerializeField] AnimationCurve pointerUpCurve;
+    [SerializeField] AnimationCurve pointerDownCurve;
+    [SerializeField] float pointerAnimSpeed;
+    [SerializeField] float pointerUpValue;
+    Coroutine pointerCoroutine;
+    Vector3 pointerPosition;
 
     public int Value { get { return value; } }
     public List<Edge> Edges { get { return edges; } }
@@ -40,6 +50,7 @@ public class Node : MonoBehaviour
     private void Start()
     {
         RegisterToTileGrid();
+        pointerPosition = pointerSprite.gameObject.transform.position;
 
         ////Populate the edges list with the ones got in inspector
         //if (edgesInfo.Count != 0)
@@ -100,6 +111,11 @@ public class Node : MonoBehaviour
         return Mathf.Abs(tileB.transform.position.y - transform.position.y);
     }
 
+    public void SetOccupationId(int id)
+    {
+        occupationId = id;
+    }
+
     public void HighlightNode(Color color)
     {
         highlightedSprite.color = color;
@@ -109,6 +125,32 @@ public class Node : MonoBehaviour
     public void LoseHighlight()
     {
         highlightedSprite.gameObject.SetActive(false);
+    }
+
+    public void PointNode()
+    {
+        pointerSprite.gameObject.transform.position = pointerPosition;
+        pointerHighlightedSprite.gameObject.SetActive(true);
+        pointerSprite.gameObject.SetActive(true);
+        pointerCoroutine = StartCoroutine(PointerAnimation());
+    }
+
+    public void UnpointNode()
+    {
+        pointerHighlightedSprite.gameObject.SetActive(false);
+        pointerSprite.gameObject.SetActive(false);
+        StopCoroutine(pointerCoroutine);
+    }
+
+    IEnumerator PointerAnimation()
+    {
+        while (true) 
+        {
+            pointerSprite.gameObject.transform.DOMove(new Vector3(pointerSprite.gameObject.transform.position.x, pointerSprite.gameObject.transform.position.y + pointerUpValue, pointerSprite.gameObject.transform.position.z), pointerAnimSpeed).SetEase(pointerUpCurve);
+            yield return new WaitForSeconds(pointerAnimSpeed);
+            pointerSprite.gameObject.transform.DOMove(new Vector3(pointerSprite.gameObject.transform.position.x, pointerSprite.gameObject.transform.position.y - pointerUpValue, pointerSprite.gameObject.transform.position.z), pointerAnimSpeed).SetEase(pointerDownCurve);
+            yield return new WaitForSeconds(pointerAnimSpeed);
+        }
     }
 
     //public void AddEdge(Node otherNode, float leght, bool isBidirectional = true)

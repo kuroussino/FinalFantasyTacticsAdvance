@@ -12,17 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4788b7b210433c6468c25e72399b6f11, type: 3}
   m_Name: Shara
   m_EditorClassIdentifier: 
-  characterName: 
-  characterClass: 
-  baseMaxHp: 0
-  baseMaxMp: 0
-  move: 0
-  jump: 0
-  evade: 0
-  weaponAtk: 0
-  weaponDef: 0
-  maicPow: 0
-  magicRes: 0
-  speed: 0
-  frontIdle: []
-  backIdle: []
+  characterName: Shara
+  characterClass: Sniper
+  baseMaxHp: 5
+  baseMaxMp: 5
+  move: 3
+  jump: 4
+  evade: 65
+  weaponAtk: 8
+  weaponDef: 6
+  maicPow: 9
+  magicRes: 6
+  speed: 2
+  frontIdle:
+  - {fileID: 21300000, guid: a877198f4a671714db0602213d3adc1a, type: 3}
+  - {fileID: 21300000, guid: 29642593f48a2b64087e78afa1f9d6cd, type: 3}
+  - {fileID: 21300000, guid: bb76b6c7c462fdc45ac9e3cd7b2bb3b9, type: 3}
+  - {fileID: 21300000, guid: 29642593f48a2b64087e78afa1f9d6cd, type: 3}
+  backIdle:
+  - {fileID: 21300000, guid: 3a72de667e1ed2f4e881ada15bc000ec, type: 3}
+  - {fileID: 21300000, guid: 098e8b7bdecdda94cabe696eb64c2727, type: 3}
+  - {fileID: 21300000, guid: 0bb83f17466842140a779ef6b4bce774, type: 3}
+  - {fileID: 21300000, guid: 098e8b7bdecdda94cabe696eb64c2727, type: 3}
+  movementSpeed: 0

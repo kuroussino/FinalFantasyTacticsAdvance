@@ -12,17 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4788b7b210433c6468c25e72399b6f11, type: 3}
   m_Name: Monteblanc
   m_EditorClassIdentifier: 
-  characterName: 
-  characterClass: 
-  baseMaxHp: 0
-  baseMaxMp: 0
-  move: 0
-  jump: 0
-  evade: 0
-  weaponAtk: 0
-  weaponDef: 0
-  maicPow: 0
-  magicRes: 0
-  speed: 0
-  frontIdle: []
-  backIdle: []
+  characterName: Monteblanc
+  characterClass: Thief
+  baseMaxHp: 6
+  baseMaxMp: 2
+  move: 4
+  jump: 3
+  evade: 70
+  weaponAtk: 7
+  weaponDef: 8
+  maicPow: 6
+  magicRes: 7
+  speed: 2
+  frontIdle:
+  - {fileID: 21300000, guid: 86a9a35704dd5974687b09e19e409b28, type: 3}
+  - {fileID: 21300000, guid: 5e7a644d7196da0498b0f8b3fe99a23f, type: 3}
+  - {fileID: 21300000, guid: 39bda911f48244c439b4ff29ba30ea8e, type: 3}
+  - {fileID: 21300000, guid: 5e7a644d7196da0498b0f8b3fe99a23f, type: 3}
+  backIdle:
+  - {fileID: 21300000, guid: 98448799e63d00a4fa2f8a579170bcf4, type: 3}
+  - {fileID: 21300000, guid: c86051bc966d0654d9c308c0dab035db, type: 3}
+  - {fileID: 21300000, guid: 3ea29ef94a5c4124e8f9495eb9d28adf, type: 3}
+  - {fileID: 21300000, guid: c86051bc966d0654d9c308c0dab035db, type: 3}
+  movementSpeed: 0.35
