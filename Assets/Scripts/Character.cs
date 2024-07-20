@@ -3,6 +3,7 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.UIElements;
 
 public class Character : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class Character : MonoBehaviour
     [SerializeField] AnimationCurve walkCurve;
     [SerializeField] AnimationCurve jumpUpCurve;
     [SerializeField] AnimationCurve jumpDownCurve;
+    [SerializeField] AnimationCurve dodgingCurve;
     [SerializeField] float walkAnimationSpeed;
     SpriteManager spriteManager;
     float jumpDuration;
@@ -20,9 +22,10 @@ public class Character : MonoBehaviour
 
     [Header("Pathfinding")]
     [SerializeField] LayerMask sampleMask;
-    List<Node> highlightedNodes = new List<Node>();
-    Node currentOccupiedNode;
-    Node currentTargetNode;
+    [SerializeField] LayerMask characterMask;
+    List<NodeB> highlightedNodes = new List<NodeB>();
+    NodeB currentOccupiedNode;
+    NodeB currentTargetNode;
 
     [Header("Gameplay")]
     [SerializeField] CharacterData characterData;
@@ -35,11 +38,12 @@ public class Character : MonoBehaviour
 
     #region Public
     public CharacterData CharacterData { get { return characterData; } }
-    public Node CurrentOccupiedNode { get { return currentOccupiedNode; } }
-    public List<Node> HighlightedNodes { get { return highlightedNodes; } }
+    public NodeB CurrentOccupiedNode { get { return currentOccupiedNode; } }
+    public List<NodeB> HighlightedNodes { get { return highlightedNodes; } }
     public bool IsWalking { get { return isWalking; } }
     public float Jump { get { return characterData.Jump; } }
     public bool IsChoosingDirection {  get { return isChoosingDirection; } }
+    public int Team { get { return team; } }
     #endregion
 
     #endregion
@@ -96,7 +100,7 @@ public class Character : MonoBehaviour
     #endregion
 
     #region Methods
-    private void MoveTo(Node[] path)
+    private void MoveTo(NodeB[] path)
     {
         if(TileGrid.Instance.SelectedCharacter != this)
             return;
@@ -121,7 +125,7 @@ public class Character : MonoBehaviour
         StartCoroutine(PathWalkCoroutine(path));
     }
 
-    IEnumerator PathWalkCoroutine(Node[] path)
+    IEnumerator PathWalkCoroutine(NodeB[] path)
     {
         isWalking = true;
         TileGrid.Instance.turnState = TurnState.MOVING;
@@ -132,6 +136,9 @@ public class Character : MonoBehaviour
             UpdateDirection((path[i].transform.position - transform.position).normalized);
 
             yield return new WaitForEndOfFrame();
+
+            if (path[i] != path[path.Length - 1])
+                CheckIfNextTileOccupied(path[i - 1], path[i], path[i + 1]);
 
             //path[i].GetComponent<Node>().SetOccupationId(-1);
 
@@ -237,7 +244,7 @@ public class Character : MonoBehaviour
 
         if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit, float.MaxValue, sampleMask))
         {
-            currentOccupiedNode = hit.collider.GetComponent<Node>();
+            currentOccupiedNode = hit.collider.GetComponent<NodeB>();
             Debug.Log("current occupied node: " + currentOccupiedNode.name);
         }
 
@@ -257,6 +264,69 @@ public class Character : MonoBehaviour
         //HighlightNodesInRange(AreaMode.ATTACKING);
     }
 
+    private void CheckIfNextTileOccupied(NodeB currentNode, NodeB nextNode, NodeB nextNextNode)
+    {
+        if (nextNode.OccupationId == team) 
+        {
+            Debug.Log("Ally detected");
+            if (Physics.Raycast(nextNode.transform.position, Vector3.up, out RaycastHit hit, float.MaxValue, characterMask))
+            {
+                Debug.DrawRay(nextNode.transform.position, Vector3.up * 10f, Color.green, 10f);
+                StartCoroutine(DodgeCR(hit.collider.GetComponent<Character>(), currentNode.transform.position, nextNextNode.transform.position, nextNode.transform.position));
+            }
+        }
+    }
+
+    private IEnumerator DodgeCR(Character dodgingCharacter, Vector3 fromPosition, Vector3 toPosition, Vector3 occupiedPosition)
+    {
+        Vector3 dodgeDirection = Vector3.zero;
+        List<Vector3> blockedDirections = new List<Vector3>();
+
+        Vector3 fromDir = fromPosition - occupiedPosition;
+        Vector3 toDir = toPosition - occupiedPosition;
+        fromDir = Vector3.ProjectOnPlane(fromDir, Vector3.up).normalized;
+        toDir = Vector3.ProjectOnPlane(toDir, Vector3.up).normalized;
+
+        Debug.Log("from dir: " + fromDir + "to dir: " + toDir);
+        Debug.DrawRay(dodgingCharacter.transform.position, fromDir, Color.blue, 15f);
+        Debug.DrawRay(dodgingCharacter.transform.position, toDir, Color.red, 15f);
+
+        blockedDirections.Add(fromDir);
+        blockedDirections.Add(toDir);
+
+        List<Vector3> availableDirections = new List<Vector3>();
+
+        if (!blockedDirections.Contains(Vector3.forward))
+            availableDirections.Add(Vector3.forward);
+
+        if (!blockedDirections.Contains(Vector3.back))
+            availableDirections.Add(Vector3.back);
+
+        if (!blockedDirections.Contains(Vector3.right))
+            availableDirections.Add(Vector3.right);
+
+        if (!blockedDirections.Contains(Vector3.left))
+            availableDirections.Add(Vector3.left);
+
+        Debug.Log("available0: " + availableDirections[0] + "available1: " + availableDirections[1]);
+
+        int random = Random.Range(0, availableDirections.Count);
+
+        dodgeDirection= availableDirections[random];
+
+        Debug.Log("dodge DIR: " + dodgeDirection);
+
+        Vector3 targetDodgePosition = occupiedPosition + (dodgeDirection);
+
+        if (dodgeDirection != Vector3.zero)
+        {
+            dodgingCharacter.transform.DOMove(targetDodgePosition, walkAnimationSpeed / 2).SetEase(dodgingCurve).SetDelay(walkAnimationSpeed / 2);
+            dodgingCharacter.transform.DOMove(occupiedPosition, walkAnimationSpeed / 2).SetEase(dodgingCurve).SetDelay(walkAnimationSpeed + walkAnimationSpeed / 2);
+            yield return new WaitForSeconds(walkAnimationSpeed);
+        }
+        yield return null;
+    }
+
     private void HighlightNodesInRange(AreaMode mode)
     {
         if (TileGrid.Instance.SelectedCharacter != this)
@@ -274,7 +344,7 @@ public class Character : MonoBehaviour
         
         Debug.Log("areaResult count: " + highlightedNodes.Count);
 
-        foreach (Node node in highlightedNodes)
+        foreach (NodeB node in highlightedNodes)
         {
             node.HighlightNode(TileGrid.Instance.UnselectedTileColor);
         }

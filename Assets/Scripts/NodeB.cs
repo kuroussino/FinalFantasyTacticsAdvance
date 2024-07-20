@@ -4,13 +4,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Node : MonoBehaviour
+public class NodeB : MonoBehaviour
 {
     //Graph (Pure)
     private int value;
     private List<Edge> edges;
 
-    private int occupationId = -1;
+    [SerializeField] private int occupationId = -1;
 
     [SerializeField, Min(1)] float cost = 1;
     [SerializeField] LayerMask sampleMask;
@@ -64,7 +64,7 @@ public class Node : MonoBehaviour
     }
     #endregion
 
-    public Node(int value)
+    public NodeB(int value)
     {
         occupationId = -1;
         this.value = value;
@@ -82,7 +82,7 @@ public class Node : MonoBehaviour
         edges.MergeSort();
     }
 
-    public float GetManhattanDistance(Node tile)
+    public float GetManhattanDistance(NodeB tile)
     {
         return Mathf.Abs(transform.position.x - tile.transform.position.x) + Mathf.Abs(transform.position.z - tile.transform.position.z);
     }
@@ -101,14 +101,14 @@ public class Node : MonoBehaviour
     {
         if (Physics.Raycast(transform.position + direction * blockScale + Vector3.up * float.MaxValue / 2, Vector3.down, out RaycastHit hit, float.MaxValue, sampleMask))
         {
-            if (hit.transform.gameObject.TryGetComponent(out Node tile))
+            if (hit.transform.gameObject.TryGetComponent(out NodeB tile))
             { 
                 edges.Add(new Edge(this, tile, cost, CalculateStepHeight(tile)));
             }
         }
     }
 
-    public float CalculateStepHeight(Node tileB) //pivot must be on top of the cube mesh and character at its foot
+    public float CalculateStepHeight(NodeB tileB) //pivot must be on top of the cube mesh and character at its foot
     {
         return Mathf.Abs(tileB.transform.position.y - transform.position.y);
     }

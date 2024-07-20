@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class Edge : IComparable<Edge>
 {
-    Node tile_A;
-    Node tile_B;
+    NodeB tile_A;
+    NodeB tile_B;
     float weight;
     float stepHeight;
     //b-a direction check generate on start
@@ -18,7 +18,7 @@ public class Edge : IComparable<Edge>
     public float Weight => weight;
     public float StepHeight => stepHeight;
 
-    public Edge(Node tile_A, Node tile_B, float weight, float stepHeight)
+    public Edge(NodeB tile_A, NodeB tile_B, float weight, float stepHeight)
     {
         if(tile_A == null || tile_B == null)
             return;
@@ -42,7 +42,7 @@ public class Edge : IComparable<Edge>
         this.stepHeight = stepHeight;
     }
 
-    public Node GetNeighbor(Node tile)
+    public NodeB GetNeighbor(NodeB tile)
     {
         if(tile == tile_A)
             return tile_B;

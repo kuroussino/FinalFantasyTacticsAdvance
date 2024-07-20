@@ -1755,6 +1755,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 232646356616839831, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: team
       value: 1
@@ -1769,11 +1773,55 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: walkAnimationSpeed
-      value: 0.45
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: characterMask.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[0].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[0].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[0].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 2611778964387797039, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_Name
       value: Monteblanc
+      objectReference: {fileID: 0}
+    - target: {fileID: 2611778964387797039, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3075068810254161654, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1781,7 +1829,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4200405713883484784, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 4200405713883484784, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1789,7 +1837,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4200405713883484784, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -10
+      value: -12
       objectReference: {fileID: 0}
     - target: {fileID: 4200405713883484784, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1823,6 +1871,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 5e7a644d7196da0498b0f8b3fe99a23f, type: 3}
+    - target: {fileID: 9041337028020785763, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -10894,6 +10946,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 232646356616839831, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: team
       value: 1
@@ -10904,11 +10960,55 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 4a6688fff2a10b64b864753c041a89aa, type: 2}
     - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: walkAnimationSpeed
-      value: 0.45
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: characterMask.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[0].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[0].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[0].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 2611778964387797039, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_Name
       value: Ritz
+      objectReference: {fileID: 0}
+    - target: {fileID: 2611778964387797039, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3075068810254161654, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_LocalPosition.y
@@ -10958,6 +11058,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 1cd05356f933d8f4598ef66e8ec03ed9, type: 3}
+    - target: {fileID: 9041337028020785763, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -11563,6 +11667,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 232646356616839831, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: characterData
       value: 
@@ -11573,11 +11681,55 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: walkAnimationSpeed
-      value: 0.45
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: characterMask.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[0].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[0].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[0].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 2611778964387797039, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_Name
       value: Ezel
+      objectReference: {fileID: 0}
+    - target: {fileID: 2611778964387797039, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4200405713883484784, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -11623,6 +11775,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 1a4aa347e971ff64b8da63bbb763f853, type: 3}
+    - target: {fileID: 9041337028020785763, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -22495,6 +22651,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7863481568082315386, guid: 3a70ba73c5f7977459cb7d5832e46c74, type: 3}
+      propertyPath: cost
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -26692,13 +26852,61 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 232646356616839831, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: walkAnimationSpeed
-      value: 0.45
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: characterMask.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[0].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].inSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[0].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].outSlope
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[0].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: dodgingCurve.m_Curve.Array.data[1].tangentMode
+      value: 34
       objectReference: {fileID: 0}
     - target: {fileID: 2611778964387797039, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_Name
       value: Shara
+      objectReference: {fileID: 0}
+    - target: {fileID: 2611778964387797039, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4200405713883484784, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_LocalPosition.x
@@ -26739,6 +26947,10 @@ PrefabInstance:
     - target: {fileID: 4200405713883484784, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9041337028020785763, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -26980,6 +27192,10 @@ PrefabInstance:
     - target: {fileID: 3956907155973645181, guid: 3a70ba73c5f7977459cb7d5832e46c74, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7863481568082315386, guid: 3a70ba73c5f7977459cb7d5832e46c74, type: 3}
+      propertyPath: occupationId
+      value: -1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

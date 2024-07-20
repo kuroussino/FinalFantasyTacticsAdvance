@@ -8,7 +8,7 @@ using UnityEngine;
 public class Graph
 {
     //private Dictionary<int, Node> nodes = new Dictionary<int, Node>();
-    private List<Node> nodes = new List<Node>();
+    private List<NodeB> nodes = new List<NodeB>();
 
     public int Count { get { return nodes.Count; } }
 
@@ -161,7 +161,7 @@ public class Graph
 
     #region Methods
 
-    public bool AddTile(Node tile)
+    public bool AddTile(NodeB tile)
     {
         if (tile == null)
         {
@@ -239,8 +239,10 @@ public class Graph
     //    return null;
     //}
 
-    public Node[] GetPath(in Node start, in Node end, int teamId, float stepHeight)
+    public NodeB[] GetPath(in NodeB start, in NodeB end, int teamId, float stepHeight)
     {
+        Debug.Log("team id astar: " + teamId);
+
         if (start == null || end == null)
         {
             return null;
@@ -251,6 +253,12 @@ public class Graph
             return null;
         }
 
+        if (start == end)
+        {
+            Debug.Log("start equals end");
+            return null;
+        }
+
         int[] nodesValues = AStarSearch(start, end, teamId, stepHeight);
 
         if (nodesValues == null)
@@ -258,11 +266,11 @@ public class Graph
             Debug.Log("NO PATH");
             return null;
         }
-        
+
         int currentNodeValue = end.Value;
         int nextNodeValue = nodesValues[currentNodeValue];
 
-        Stack<Node> path = new Stack<Node>();
+        Stack<NodeB> path = new Stack<NodeB>();
 
         while (currentNodeValue != start.Value)
         {
@@ -276,7 +284,7 @@ public class Graph
         return path.ToArray();
     }
 
-    private int[] AStarSearch(in Node start, in Node end, int teamId, float stepHeight)
+    private int[] AStarSearch(in NodeB start, in NodeB end, int teamId, float stepHeight)
     {
         PriorityQueue<int> availableTiles = new PriorityQueue<int>();
         HashSet<int> exploredNodes = new HashSet<int>();
@@ -289,8 +297,8 @@ public class Graph
         costsFromStart[start.Value] = 0;
         availableTiles.Enqueue(start.Value, 0, 0);
 
-        Node currentNode;
-        Node connectedNode;
+        NodeB currentNode;
+        NodeB connectedNode;
         Edge connectionEdge;
         float heuristic;
         float connectionCost;
@@ -330,7 +338,7 @@ public class Graph
         return null;
     }
 
-    public Node[] GetArea(in Node start, float range, int teamId, float stepHeight, bool includeStart, bool includeAllies, bool includeEnemies, AreaMode mode)
+    public NodeB[] GetArea(in NodeB start, float range, int teamId, float stepHeight, bool includeStart, bool includeAllies, bool includeEnemies, AreaMode mode)
     {
         if (start == null)
         {
@@ -342,10 +350,10 @@ public class Graph
             return null;
         }
 
-        Node[] nodesValues = AreaSearch(start, range, teamId, stepHeight, mode);
+        NodeB[] nodesValues = AreaSearch(start, range, teamId, stepHeight, mode);
         //Debug.Log(nodesValues.Length);
 
-        List<Node> areaNodes = new List<Node>();
+        List<NodeB> areaNodes = new List<NodeB>();
         for (int i = 0; i < nodesValues.Length; i++)
         {
             if ((!includeAllies && nodesValues[i].OccupationId == teamId) || (!includeEnemies && nodesValues[i].OccupationId > 0 && includeEnemies && nodesValues[i].OccupationId != teamId))
@@ -361,11 +369,11 @@ public class Graph
         return areaNodes.ToArray();
     }
 
-    private Node[] AreaSearch(in Node start, float range, int teamId, float stepHeight, AreaMode mode)
+    private NodeB[] AreaSearch(in NodeB start, float range, int teamId, float stepHeight, AreaMode mode)
     {
         PriorityQueue<int> availableTiles = new PriorityQueue<int>();
         HashSet<int> exploredNodes = new HashSet<int>();
-        List<Node> areaNodes = new List<Node>();
+        List<NodeB> areaNodes = new List<NodeB>();
         float[] costsFromStart = new float[nodes.Count];
 
         for (int i = 0; i < costsFromStart.Length; i++)
@@ -375,8 +383,8 @@ public class Graph
         availableTiles.Enqueue(start.Value, 0);
         exploredNodes.Add(start.Value);
 
-        Node currentNode;
-        Node connectedNode;
+        NodeB currentNode;
+        NodeB connectedNode;
         Edge connectionEdge;
         //float connectionCost;
 
@@ -406,7 +414,7 @@ public class Graph
 
                             if (connectedNodeCost <= range)
                             {
-                                costsFromStart[connectedNode.Value] = connectedNodeCost;
+                                costsFromStart[connectedNode.Value] = Mathf.Min(connectedNodeCost, costsFromStart[connectedNode.Value]);
 
                                 if (!areaNodes.Contains(connectedNode))
                                 {
@@ -424,7 +432,7 @@ public class Graph
 
                             if (connectedNodeCost <= range)
                             {
-                                costsFromStart[connectedNode.Value] = connectedNodeCost;
+                                costsFromStart[connectedNode.Value] = Mathf.Min(connectedNodeCost, costsFromStart[connectedNode.Value]);
 
                                 if (!areaNodes.Contains(connectedNode))
                                 {
@@ -443,32 +451,32 @@ public class Graph
 
 public class PriorityQueue
 {
-    private SortedDictionary<float, Queue<Node>> elements = new SortedDictionary<float, Queue<Node>>();
+    private SortedDictionary<float, Queue<NodeB>> elements = new SortedDictionary<float, Queue<NodeB>>();
 
     public int Count
     {
         get { return elements.Count; }
     }
 
-    public void Enqueue(Node item, float priority)
+    public void Enqueue(NodeB item, float priority)
     {
         if (!elements.ContainsKey(priority))
         {
-            elements[priority] = new Queue<Node>();
+            elements[priority] = new Queue<NodeB>();
         }
 
         elements[priority].Enqueue(item);
     }
 
-    public Node Dequeue()
+    public NodeB Dequeue()
     {
         if (elements.Count == 0)
         {
             throw new InvalidOperationException("Priority queue is empty");
         }
 
-        KeyValuePair<float, Queue<Node>> queue = elements.First();
-        Node item = queue.Value.Dequeue();
+        KeyValuePair<float, Queue<NodeB>> queue = elements.First();
+        NodeB item = queue.Value.Dequeue();
 
         if (queue.Value.Count == 0)
         {

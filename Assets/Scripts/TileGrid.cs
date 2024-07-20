@@ -29,7 +29,7 @@ public class TileGrid : Singleton<TileGrid>
     //[SerializeField] Node testStart;
     //[SerializeField] Node testEnd;
 
-    public Node currentHighlightedNode;
+    public NodeB currentHighlightedNode;
     #endregion
 
     #region Public
@@ -82,9 +82,9 @@ public class TileGrid : Singleton<TileGrid>
             //selectedCharacter.CurrentOccupiedNode.UnpointNode();
             currentHighlightedNode.UnpointNode();
             selectedCharacter.ClearHighlightedNodes();
-            Node currStart = selectedCharacter.CurrentOccupiedNode;
+            NodeB currStart = selectedCharacter.CurrentOccupiedNode;
             //Debug.Log("start: " + currStart.name + " currHighlight: " + currentHighlightedNode.name);
-            EventsManager.NodeClicked(mapGrid.GetPath(currStart, currentHighlightedNode, 0, selectedCharacter.Jump));
+            EventsManager.NodeClicked(mapGrid.GetPath(currStart, currentHighlightedNode, selectedCharacter.Team, selectedCharacter.Jump));
             currentHighlightedNode = null;
         }
 
@@ -106,18 +106,18 @@ public class TileGrid : Singleton<TileGrid>
     #endregion
 
     #region Methods
-    public void RegisterTile(Node tile)
+    public void RegisterTile(NodeB tile)
     {
         mapGrid.AddTile(tile);
     }
 
     private void CheckHighlightedNode() 
     {
-        Node hitNode = null;
+        NodeB hitNode = null;
 
         Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, sampleMask))
-            hitNode = hit.collider.GetComponent<Node>();
+            hitNode = hit.collider.GetComponent<NodeB>();
 
         if (hitNode != null && selectedCharacter.HighlightedNodes.Contains(hitNode))
         {
@@ -166,20 +166,20 @@ public class TileGrid : Singleton<TileGrid>
 
         if (Physics.Raycast(currentHighlightedNode.transform.position + dir * 2f + Vector3.up, Vector3.down, out RaycastHit hit, float.MaxValue, sampleMask))
         {
-            if (hit.collider.GetComponent<Node>() == currentHighlightedNode)
+            if (hit.collider.GetComponent<NodeB>() == currentHighlightedNode)
                 return;
 
             currentHighlightedNode.UnpointNode();
-            currentHighlightedNode = hit.collider.GetComponent<Node>();
+            currentHighlightedNode = hit.collider.GetComponent<NodeB>();
             currentHighlightedNode.PointNode();
         }
         else if (Physics.Raycast(currentHighlightedNode.transform.position + dir * 2f + Vector3.down, Vector3.up, out RaycastHit hit0, float.MaxValue, sampleMask))
         {
-            if (hit0.collider.GetComponent<Node>() == currentHighlightedNode)
+            if (hit0.collider.GetComponent<NodeB>() == currentHighlightedNode)
                 return;
 
             currentHighlightedNode.UnpointNode();
-            currentHighlightedNode = hit0.collider.GetComponent<Node>();
+            currentHighlightedNode = hit0.collider.GetComponent<NodeB>();
             currentHighlightedNode.PointNode();
         }
     }
@@ -196,7 +196,7 @@ public class TileGrid : Singleton<TileGrid>
         }
     }
 
-    public Node[] GetAreaUtility(Node start, float range, int teamId, float stepHeight, bool includeStart, bool includeAllies, bool includeEnemies, AreaMode mode)
+    public NodeB[] GetAreaUtility(NodeB start, float range, int teamId, float stepHeight, bool includeStart, bool includeAllies, bool includeEnemies, AreaMode mode)
     {
         return mapGrid.GetArea(start, range, teamId, stepHeight, includeStart, includeAllies, includeEnemies, mode);
     }
