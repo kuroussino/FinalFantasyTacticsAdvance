@@ -188,11 +188,11 @@ public class TileGrid : Singleton<TileGrid>
     {
         if (turnState == TurnState.CHOOSING && currentHighlightedNode != null)
         {
-            Camera.main.transform.DOMove(currentHighlightedNode.transform.position + new Vector3(15f, 13f, 15f), cameraFollowDuration);
+            Camera.main.transform.DOMove(currentHighlightedNode.transform.position + new Vector3(15f, 12f, 15f), cameraFollowDuration);
         }
         else
         {
-            Camera.main.transform.DOMove(selectedCharacter.transform.position + new Vector3(15f, 13f, 15f), cameraFollowDuration);
+            Camera.main.transform.DOMove(selectedCharacter.transform.position + new Vector3(15f, 12f, 15f), cameraFollowDuration);
         }
     }
 

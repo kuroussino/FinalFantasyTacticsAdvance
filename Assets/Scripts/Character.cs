@@ -71,8 +71,6 @@ public class Character : MonoBehaviour
                 UpdateDirection(Vector3.back);
                 break;
         }
-
-        Debug.Log("Current direction: " + currentDirection);
     }
 
     private void OnEnable()
@@ -237,24 +235,16 @@ public class Character : MonoBehaviour
 
     private void GetCurrentOccupiedNode()
     {
-        Debug.Log("mi son chiamato");
-
-        //if (tilegrid.instance.selectedcharacter != this)
-        //    return;
-
         if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit, float.MaxValue, sampleMask))
         {
             currentOccupiedNode = hit.collider.GetComponent<NodeB>();
-            Debug.Log("current occupied node: " + currentOccupiedNode.name);
+            //Debug.Log("current occupied node: " + currentOccupiedNode.name);
         }
-
         //Debug.DrawRay(transform.position + Vector3.up, Vector3.down * 5f, Color.red, 10f);
     }
 
     private void SetSelfOccupationId()
     {
-        Debug.Log("sono nullo? " + (currentOccupiedNode == null));
-
         currentOccupiedNode.SetOccupationId(team);
     }
 
@@ -342,7 +332,7 @@ public class Character : MonoBehaviour
                 break;
         }
         
-        Debug.Log("areaResult count: " + highlightedNodes.Count);
+        //Debug.Log("areaResult count: " + highlightedNodes.Count);
 
         foreach (NodeB node in highlightedNodes)
         {
@@ -351,7 +341,7 @@ public class Character : MonoBehaviour
 
         TileGrid.Instance.currentHighlightedNode = currentOccupiedNode;
         currentOccupiedNode.PointNode();
-        Debug.Log("CurrentHighLightedNode: " + TileGrid.Instance.currentHighlightedNode.name);
+        //Debug.Log("CurrentHighLightedNode: " + TileGrid.Instance.currentHighlightedNode.name);
     }
 
     public void ClearHighlightedNodes()

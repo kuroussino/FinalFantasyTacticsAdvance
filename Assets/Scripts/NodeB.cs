@@ -115,7 +115,6 @@ public class NodeB : MonoBehaviour
 
     public void SetOccupationId(int id)
     {
-        Debug.LogError("ID SET");
         occupationId = id;
     }
 
