@@ -330,7 +330,7 @@ public class Graph
         return null;
     }
 
-    public Node[] GetArea(in Node start, float range, int teamId, float stepHeight, bool filterOccupiedTiles = false)
+    public Node[] GetArea(in Node start, float range, int teamId, float stepHeight, bool includeStart, bool includeAllies, bool includeEnemies, AreaMode mode)
     {
         if (start == null)
         {
@@ -342,22 +342,26 @@ public class Graph
             return null;
         }
 
-        Node[] nodesValues = AreaSearch(start, range, teamId, stepHeight);
-        Debug.Log(nodesValues.Length);
+        Node[] nodesValues = AreaSearch(start, range, teamId, stepHeight, mode);
+        //Debug.Log(nodesValues.Length);
 
         List<Node> areaNodes = new List<Node>();
         for (int i = 0; i < nodesValues.Length; i++)
         {
-            if (filterOccupiedTiles && nodesValues[i].OccupationId >= 0)
+            if ((!includeAllies && nodesValues[i].OccupationId == teamId) || (!includeEnemies && nodesValues[i].OccupationId > 0 && includeEnemies && nodesValues[i].OccupationId != teamId))
                 continue;
+
             areaNodes.Add(nodesValues[i]);
         }
 
-        Debug.Log(areaNodes.Count);
+        if(includeStart)
+            areaNodes.Add(start);
+
+        //Debug.Log(areaNodes.Count);
         return areaNodes.ToArray();
     }
 
-    private Node[] AreaSearch(in Node start, float range, int teamId, float stepHeight)
+    private Node[] AreaSearch(in Node start, float range, int teamId, float stepHeight, AreaMode mode)
     {
         PriorityQueue<int> availableTiles = new PriorityQueue<int>();
         HashSet<int> exploredNodes = new HashSet<int>();
@@ -368,12 +372,13 @@ public class Graph
             costsFromStart[i] = float.MaxValue;
 
         costsFromStart[start.Value] = 0;
-        availableTiles.Enqueue(start.Value, 0, 0);
+        availableTiles.Enqueue(start.Value, 0);
+        exploredNodes.Add(start.Value);
 
         Node currentNode;
         Node connectedNode;
         Edge connectionEdge;
-        float connectionCost;
+        //float connectionCost;
 
         while (availableTiles.Count > 0)
         {
@@ -389,20 +394,46 @@ public class Graph
                 if (exploredNodes.Contains(connectedNode.Value))
                     continue;
 
-                if ((connectedNode.OccupationId < 0 || connectedNode.OccupationId == teamId) && stepHeight >= connectionEdge.StepHeight)
+                switch (mode)
                 {
-                    connectionCost = costsFromStart[currentNode.Value] + connectionEdge.Weight;
+                    case AreaMode.WALKING:
 
-                    if (connectionCost <= range)
-                    {
-                        costsFromStart[connectedNode.Value] = Mathf.Min(costsFromStart[connectedNode.Value], connectionCost);
+                        float connectedNodeCost;
 
-                        if (!areaNodes.Contains(connectedNode))
+                        if ((connectedNode.OccupationId < 0 || connectedNode.OccupationId == teamId) && stepHeight >= connectionEdge.StepHeight)
                         {
-                            areaNodes.Add(connectedNode);
-                            availableTiles.Enqueue(connectedNode.Value, costsFromStart[connectedNode.Value]);
+                            connectedNodeCost = costsFromStart[currentNode.Value] + connectionEdge.Weight;
+
+                            if (connectedNodeCost <= range)
+                            {
+                                costsFromStart[connectedNode.Value] = connectedNodeCost;
+
+                                if (!areaNodes.Contains(connectedNode))
+                                {
+                                    areaNodes.Add(connectedNode);
+                                    availableTiles.Enqueue(connectedNode.Value, costsFromStart[connectedNode.Value]);
+                                }
+                            }
                         }
-                    }
+                        break;
+                    case AreaMode.ATTACKING:
+
+                        if (stepHeight >= connectionEdge.StepHeight)
+                        {
+                            connectedNodeCost = costsFromStart[currentNode.Value] + 1;
+
+                            if (connectedNodeCost <= range)
+                            {
+                                costsFromStart[connectedNode.Value] = connectedNodeCost;
+
+                                if (!areaNodes.Contains(connectedNode))
+                                {
+                                    areaNodes.Add(connectedNode);
+                                    availableTiles.Enqueue(connectedNode.Value, costsFromStart[connectedNode.Value]);
+                                }
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -479,4 +510,10 @@ public enum Order
 {
     BFS,
     DFS
+}
+
+public enum AreaMode
+{
+    WALKING,
+    ATTACKING
 }

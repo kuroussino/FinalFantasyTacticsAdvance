@@ -10,10 +10,11 @@ public class Node : MonoBehaviour
     private int value;
     private List<Edge> edges;
 
+    private int occupationId = -1;
+
     [SerializeField, Min(1)] float cost = 1;
     [SerializeField] LayerMask sampleMask;
     [SerializeField] float blockScale;
-    int occupationId = -1;
 
     [Header("Misc")]
     [SerializeField] SpriteRenderer highlightedSprite;
@@ -28,7 +29,7 @@ public class Node : MonoBehaviour
 
     public int Value { get { return value; } }
     public List<Edge> Edges { get { return edges; } }
-    public int OccupationId => occupationId;
+    public int OccupationId { get { return occupationId; } }
 
     ////Struct Edges
     //[SerializeField] List<EdgeInfo> edgesInfo = new List<EdgeInfo>();
@@ -65,6 +66,7 @@ public class Node : MonoBehaviour
 
     public Node(int value)
     {
+        occupationId = -1;
         this.value = value;
     }
 
@@ -113,6 +115,7 @@ public class Node : MonoBehaviour
 
     public void SetOccupationId(int id)
     {
+        Debug.LogError("ID SET");
         occupationId = id;
     }
 

@@ -10896,7 +10896,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: team
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1117913049773316592, guid: e73010a6fd5350d49882eee50fa9b3a3, type: 3}
       propertyPath: characterData

@@ -55,6 +55,10 @@ public class TileGrid : Singleton<TileGrid>
 
         EventsManager.AllNodesRegistered.Invoke();
 
+        yield return new WaitForSeconds(0.1f);
+
+        EventsManager.AllNodesRegisteredP2.Invoke();
+
         turnState = TurnState.CHOOSING;
 
         //Node[] path = mapGrid.GetPath(testStart, testEnd, 0, stepHeight);
@@ -192,9 +196,9 @@ public class TileGrid : Singleton<TileGrid>
         }
     }
 
-    public Node[] GetAreaUtility(Node start, float range, float stepHeight)
+    public Node[] GetAreaUtility(Node start, float range, int teamId, float stepHeight, bool includeStart, bool includeAllies, bool includeEnemies, AreaMode mode)
     {
-        return mapGrid.GetArea(start, range, 0, stepHeight);
+        return mapGrid.GetArea(start, range, teamId, stepHeight, includeStart, includeAllies, includeEnemies, mode);
     }
 
     public void PassTurn()

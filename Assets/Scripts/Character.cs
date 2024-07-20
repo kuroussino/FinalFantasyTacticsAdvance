@@ -73,11 +73,13 @@ public class Character : MonoBehaviour
 
     private void OnEnable()
     {
+        
         EventsManager.NodeClicked += MoveTo;
         EventsManager.AllNodesRegistered += GetCurrentOccupiedNode;
-        EventsManager.AllNodesRegistered += HighlightNodesInRange;
+        EventsManager.AllNodesRegisteredP2 += ShowWalkArea;
+        EventsManager.AllNodesRegisteredP2 += SetSelfOccupationId;
         EventsManager.TurnChanged += GetCurrentOccupiedNode;
-        EventsManager.TurnChanged += HighlightNodesInRange;
+        EventsManager.TurnChanged += ShowWalkArea;
         EventsManager.DirectionChosen += EndTurnDirectionChange;
     }
 
@@ -85,9 +87,10 @@ public class Character : MonoBehaviour
     {
         EventsManager.NodeClicked -= MoveTo;
         EventsManager.AllNodesRegistered -= GetCurrentOccupiedNode;
-        EventsManager.AllNodesRegistered -= HighlightNodesInRange;
+        EventsManager.AllNodesRegisteredP2 -= ShowWalkArea;
+        EventsManager.AllNodesRegisteredP2 -= SetSelfOccupationId;
         EventsManager.TurnChanged -= GetCurrentOccupiedNode;
-        EventsManager.TurnChanged -= HighlightNodesInRange;
+        EventsManager.TurnChanged -= ShowWalkArea;
         EventsManager.DirectionChosen -= EndTurnDirectionChange;
     }
     #endregion
@@ -111,9 +114,10 @@ public class Character : MonoBehaviour
             return;
         }
 
-        currentOccupiedNode.SetOccupationId(-1);
+        Debug.Log("team: " + team);
         UpdateDirection((path[1].transform.position - transform.position).normalized);
         currentTargetNode = path[path.Length - 1];
+        currentOccupiedNode.SetOccupationId(-1);
         StartCoroutine(PathWalkCoroutine(path));
     }
 
@@ -121,7 +125,6 @@ public class Character : MonoBehaviour
     {
         isWalking = true;
         TileGrid.Instance.turnState = TurnState.MOVING;
-        currentOccupiedNode.SetOccupationId(-1);
         HighlightTargetNode();
 
         for (int i = 1; i < path.Length; i++) 
@@ -129,6 +132,8 @@ public class Character : MonoBehaviour
             UpdateDirection((path[i].transform.position - transform.position).normalized);
 
             yield return new WaitForEndOfFrame();
+
+            //path[i].GetComponent<Node>().SetOccupationId(-1);
 
             if (path[i].transform.position.y != transform.position.y)
             {
@@ -182,6 +187,8 @@ public class Character : MonoBehaviour
         //yield return new WaitForSeconds(1f);
         isWalking = false;
 
+        currentOccupiedNode.SetOccupationId(team);
+
         //choosingDirection = true;
 
         TileGrid.Instance.PassTurn();
@@ -223,34 +230,53 @@ public class Character : MonoBehaviour
 
     private void GetCurrentOccupiedNode()
     {
-        if (TileGrid.Instance.SelectedCharacter != this)
-            return;
+        Debug.Log("mi son chiamato");
+
+        //if (tilegrid.instance.selectedcharacter != this)
+        //    return;
 
         if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit, float.MaxValue, sampleMask))
         {
             currentOccupiedNode = hit.collider.GetComponent<Node>();
             Debug.Log("current occupied node: " + currentOccupiedNode.name);
-            currentOccupiedNode.SetOccupationId(team);
         }
 
         //Debug.DrawRay(transform.position + Vector3.up, Vector3.down * 5f, Color.red, 10f);
     }
 
-    private void HighlightNodesInRange()
+    private void SetSelfOccupationId()
+    {
+        Debug.Log("sono nullo? " + (currentOccupiedNode == null));
+
+        currentOccupiedNode.SetOccupationId(team);
+    }
+
+    private void ShowWalkArea()
+    {
+        HighlightNodesInRange(AreaMode.WALKING);
+        //HighlightNodesInRange(AreaMode.ATTACKING);
+    }
+
+    private void HighlightNodesInRange(AreaMode mode)
     {
         if (TileGrid.Instance.SelectedCharacter != this)
             return;
 
-        highlightedNodes = TileGrid.Instance.GetAreaUtility(currentOccupiedNode, characterData.Move, characterData.Jump).ToList();
-
+        switch (mode)
+        {
+            case AreaMode.WALKING:
+                highlightedNodes = TileGrid.Instance.GetAreaUtility(currentOccupiedNode, characterData.Move, team, characterData.Jump, false, false, false, AreaMode.WALKING).ToList();
+                break;
+            case AreaMode.ATTACKING:
+                highlightedNodes = TileGrid.Instance.GetAreaUtility(currentOccupiedNode, characterData.Move, team, characterData.Jump, false, true, true, AreaMode.ATTACKING).ToList();
+                break;
+        }
+        
         Debug.Log("areaResult count: " + highlightedNodes.Count);
 
         foreach (Node node in highlightedNodes)
         {
-            if (node != currentOccupiedNode)
-                node.HighlightNode(TileGrid.Instance.UnselectedTileColor);
-            else
-                highlightedNodes.Remove(node);
+            node.HighlightNode(TileGrid.Instance.UnselectedTileColor);
         }
 
         TileGrid.Instance.currentHighlightedNode = currentOccupiedNode;
