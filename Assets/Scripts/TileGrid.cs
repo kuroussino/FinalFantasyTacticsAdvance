@@ -15,7 +15,8 @@ public class TileGrid : Singleton<TileGrid>
     Graph mapGrid = new Graph();
     //List<Node> highlightedNodes = new List<Node>();
 
-    [SerializeField] Color unselectedTileColor;
+    [SerializeField] Color unselectedTileColor_move;
+    [SerializeField] Color unselectedTileColor_attack;
     [SerializeField] Color selectedTileColor;
     [SerializeField] private LayerMask sampleMask;
     [SerializeField] private LayerMask characterMask;
@@ -36,7 +37,8 @@ public class TileGrid : Singleton<TileGrid>
     #region Public
     public Graph MapGrid { get { return mapGrid; } }
     public Character SelectedCharacter { get { return selectedCharacter; } }
-    public Color UnselectedTileColor { get {  return unselectedTileColor; } }
+    public Color UnselectedTileColor_Move { get {  return unselectedTileColor_move; } }
+    public Color UnselectedTileColor_Attack { get { return unselectedTileColor_attack; } }
     public Color SelectedTileColor { get { return selectedTileColor; } }
 
     //public Node CurrentHighlightedNode { get {  return currentHighlightedNode; } set { currentHighlightedNode = CurrentHighlightedNode; } }
@@ -75,18 +77,63 @@ public class TileGrid : Singleton<TileGrid>
     {
         //if(!selectedCharacter.IsWalking)
         //    CheckHighlightedNode();
+        if(turnState != TurnState.CHOOSING && !selectedCharacter.IsChoosingDirection)
+            NodeSelector();
 
-        NodeSelector();
-
-        if (Input.GetKeyDown(KeyCode.Z) && currentHighlightedNode != null && selectedCharacter.HighlightedNodes.Contains(currentHighlightedNode))
+        if (Input.GetKeyDown(KeyCode.Z) && currentHighlightedNode != null && selectedCharacter.HighlightedNodes.Contains(currentHighlightedNode) && !selectedCharacter.IsChoosingDirection)
         {
-            //selectedCharacter.CurrentOccupiedNode.UnpointNode();
-            currentHighlightedNode.UnpointNode();
-            selectedCharacter.ClearHighlightedNodes();
-            NodeB currStart = selectedCharacter.CurrentOccupiedNode;
-            //Debug.Log("start: " + currStart.name + " currHighlight: " + currentHighlightedNode.name);
-            EventsManager.NodeClicked(mapGrid.GetPath(currStart, currentHighlightedNode, selectedCharacter.Team, selectedCharacter.Jump));
-            currentHighlightedNode = null;
+            if (turnState == TurnState.MOVING)
+            {
+                //selectedCharacter.CurrentOccupiedNode.UnpointNode();
+                currentHighlightedNode.UnpointNode();
+                selectedCharacter.ClearHighlightedNodes();
+                NodeB currStart = selectedCharacter.CurrentOccupiedNode;
+                //Debug.Log("start: " + currStart.name + " currHighlight: " + currentHighlightedNode.name);
+                EventsManager.NodeClicked(mapGrid.GetPath(currStart, currentHighlightedNode, selectedCharacter.Team, selectedCharacter.Jump));
+                currentHighlightedNode = null;
+            }
+            else if (turnState == TurnState.ATTACKING)
+            {
+                //selectedCharacter.CurrentOccupiedNode.UnpointNode();
+                currentHighlightedNode.UnpointNode();
+                selectedCharacter.ClearHighlightedNodes();
+
+                Character chosenTarget = GetCharacterOnHighlitedNode();
+
+                currentHighlightedNode = null;
+
+                if (chosenTarget != null && !chosenTarget.IsDead)
+                {
+                    EventsManager.TargetChosen.Invoke(chosenTarget);
+                }
+                else
+                {
+                    selectedCharacter.BeginChoosingDirection();
+                }
+
+                //NodeB currStart = selectedCharacter.CurrentOccupiedNode;
+                //EventsManager.NodeClicked(mapGrid.GetPath(currStart, currentHighlightedNode, selectedCharacter.Team, selectedCharacter.Jump));
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.X) && !selectedCharacter.IsChoosingDirection)
+        {
+            if (turnState == TurnState.MOVING || turnState == TurnState.ATTACKING)
+            {
+                turnState = TurnState.CHOOSING;
+
+                currentHighlightedNode.UnpointNode();
+                currentHighlightedNode = selectedCharacter.CurrentOccupiedNode;
+                currentHighlightedNode.PointNode();
+
+                EventsManager.ShowControlledCharacterUI(selectedCharacter);
+                selectedCharacter.ClearHighlightedNodes();
+                //selectedCharacter.GainAction();
+            }
+            else
+            {
+                EventsManager.HideActionAndShowMenu();
+            }
         }
 
         if (selectedCharacter.IsChoosingDirection)
@@ -112,6 +159,16 @@ public class TileGrid : Singleton<TileGrid>
         mapGrid.AddTile(tile);
     }
 
+    private Character GetCharacterOnHighlitedNode()
+    {
+        Character hitCharacter = null;
+        if (Physics.Raycast(currentHighlightedNode.transform.position, Vector3.up, out RaycastHit hit, float.MaxValue, characterMask))
+        {
+            hitCharacter = hit.collider.GetComponent<Character>();
+        }
+        return hitCharacter;
+    }
+
     private void CheckHighlightedNode() 
     {
         NodeB hitNode = null;
@@ -129,14 +186,14 @@ public class TileGrid : Singleton<TileGrid>
             }
             else
             {
-                currentHighlightedNode.HighlightNode(unselectedTileColor);
+                currentHighlightedNode.HighlightNode(unselectedTileColor_move);
                 currentHighlightedNode = hitNode;
                 hitNode.HighlightNode(selectedTileColor);
             }
         }
         else if(currentHighlightedNode != null && selectedCharacter.HighlightedNodes.Contains(currentHighlightedNode))
         {
-            currentHighlightedNode.HighlightNode(unselectedTileColor);
+            currentHighlightedNode.HighlightNode(unselectedTileColor_move);
             currentHighlightedNode = null;
         }
     }
@@ -196,10 +253,15 @@ public class TileGrid : Singleton<TileGrid>
 
             if (hitCharacter != null)
             {
-                if(hitCharacter != selectedCharacter)
+                if (hitCharacter != selectedCharacter)
                     EventsManager.ShowTargetUI(hitCharacter);
                 else
-                    EventsManager.ShowControlledCharacterUI(selectedCharacter);
+                {
+                    if(turnState == TurnState.MOVING)
+                        EventsManager.ShowTargetUI(hitCharacter);
+                    else
+                        EventsManager.ShowControlledCharacterUI(selectedCharacter);
+                }
             }
             else
                 EventsManager.HideAllUI();
@@ -208,7 +270,7 @@ public class TileGrid : Singleton<TileGrid>
 
     private void CameraFollow()
     {
-        if (turnState == TurnState.CHOOSING && currentHighlightedNode != null)
+        if ((turnState == TurnState.MOVING || turnState == TurnState.ATTACKING) && currentHighlightedNode != null)
         {
             Camera.main.transform.DOMove(currentHighlightedNode.transform.position + new Vector3(15f, 12f, 15f), cameraFollowDuration);
         }

@@ -21,6 +21,19 @@ public class EventsManager
     public static Action<Character> ShowTargetUI;
     public static Action<Character, Character> ShowAttackUI;
     public static Action ShowConformationUI;
+
+    public static Action HideActionAndShowMenu;
+
+    public static Action<bool> toggleMoveBtn;
+    public static Action<bool> toggleAttackBtn;
+
+    //Turns
+    public static Action MoveClicked;
+    public static Action FightClicked;
+    public static Action<Character> TargetChosen;
+
+    public static Action<int> StartDmgShow;
+    public static Action EndDmgShow;
     #endregion
 
     #endregion

@@ -17,6 +17,7 @@ public class SpriteManager : MonoBehaviour
     #endregion
 
     #region Public
+    public SpriteRenderer CharacterSprite => spriteRenderer;
     #endregion
 
     #endregion

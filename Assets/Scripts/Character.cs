@@ -3,7 +3,6 @@ using UnityEngine;
 using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.UIElements;
 
 public class Character : MonoBehaviour
 {
@@ -31,9 +30,15 @@ public class Character : MonoBehaviour
     [SerializeField] CharacterData characterData;
     [SerializeField] CharacterDirection startDirection;
     [SerializeField] int team;
+    [SerializeField] GameObject directionChooseMenu;
+    [SerializeField] Color deadColor;
+    bool isDead;
     CharacterDirection currentDirection;
     bool isWalking;
     bool isChoosingDirection;
+    int actionsLeft;
+    bool moved;
+    bool attacked;
 
     [Header("Combat Stats")]
     int currentHp;
@@ -50,6 +55,7 @@ public class Character : MonoBehaviour
     public int Team { get { return team; } }
     public int CurrentHp { get { return currentHp; } }
     public int CurentMp { get { return currentMp; } }
+    public bool IsDead => isDead;
     #endregion
 
     #endregion
@@ -83,24 +89,35 @@ public class Character : MonoBehaviour
     {
         EventsManager.NodeClicked += MoveTo;
         EventsManager.AllNodesRegistered += GetCurrentOccupiedNode;
-        EventsManager.AllNodesRegisteredP2 += ShowWalkArea;
+        //EventsManager.AllNodesRegisteredP2 += ShowWalkArea;
         EventsManager.AllNodesRegisteredP2 += SetSelfOccupationId;
         EventsManager.AllNodesRegisteredP2 += InitializeCharacterStats;
+        EventsManager.AllNodesRegisteredP2 += StartTurn;
         EventsManager.TurnChanged += GetCurrentOccupiedNode;
-        EventsManager.TurnChanged += ShowWalkArea;
         EventsManager.DirectionChosen += EndTurnDirectionChange;
+
+        EventsManager.TurnChanged += StartTurn;
+        EventsManager.MoveClicked += ShowWalkArea;
+        EventsManager.FightClicked += ShowFightArea;
+        EventsManager.TargetChosen += AttackTarget;
     }
 
     private void OnDisable()
     {
         EventsManager.NodeClicked -= MoveTo;
         EventsManager.AllNodesRegistered -= GetCurrentOccupiedNode;
-        EventsManager.AllNodesRegisteredP2 -= ShowWalkArea;
+        //EventsManager.AllNodesRegisteredP2 -= ShowWalkArea;
         EventsManager.AllNodesRegisteredP2 -= SetSelfOccupationId;
         EventsManager.AllNodesRegisteredP2 -= InitializeCharacterStats;
+        EventsManager.AllNodesRegisteredP2 -= StartTurn;
         EventsManager.TurnChanged -= GetCurrentOccupiedNode;
-        EventsManager.TurnChanged -= ShowWalkArea;
         EventsManager.DirectionChosen -= EndTurnDirectionChange;
+
+        EventsManager.TurnChanged -= StartTurn;
+        EventsManager.MoveClicked -= ShowWalkArea;
+        EventsManager.FightClicked -= ShowFightArea;
+        EventsManager.TargetChosen -= AttackTarget;
+        //EventsManager.MoveClicked -= UseAction;
     }
     #endregion
 
@@ -133,8 +150,11 @@ public class Character : MonoBehaviour
     IEnumerator PathWalkCoroutine(NodeB[] path)
     {
         isWalking = true;
+        moved = true;
         TileGrid.Instance.turnState = TurnState.MOVING;
         HighlightTargetNode();
+
+        UseAction();
 
         for (int i = 1; i < path.Length; i++) 
         {
@@ -193,17 +213,13 @@ public class Character : MonoBehaviour
 
         ClearHighlightTargetNode();
         GetCurrentOccupiedNode();
-        //HighlightNodesInRange();
-
-        TileGrid.Instance.turnState = TurnState.CHOOSING;
-        //yield return new WaitForSeconds(1f);
-        isWalking = false;
-
         currentOccupiedNode.SetOccupationId(team);
 
-        //choosingDirection = true;
+        isWalking = false;
 
-        TileGrid.Instance.PassTurn();
+        TileGrid.Instance.turnState = TurnState.CHOOSING;
+
+        CheckActionsLeft();
     }
 
     private void UpdateDirection(Vector3 dir)
@@ -247,6 +263,12 @@ public class Character : MonoBehaviour
             currentOccupiedNode = hit.collider.GetComponent<NodeB>();
             //Debug.Log("current occupied node: " + currentOccupiedNode.name);
         }
+
+        if (TileGrid.Instance.SelectedCharacter != this)
+            return;
+
+        TileGrid.Instance.currentHighlightedNode = currentOccupiedNode;
+        currentOccupiedNode.PointNode();
         //Debug.DrawRay(transform.position + Vector3.up, Vector3.down * 5f, Color.red, 10f);
     }
 
@@ -257,13 +279,83 @@ public class Character : MonoBehaviour
 
     private void ShowWalkArea()
     {
-        HighlightNodesInRange(AreaMode.WALKING);
-
         if (TileGrid.Instance.SelectedCharacter != this)
             return;
 
+        EventsManager.HideAllUI();
+        TileGrid.Instance.turnState = TurnState.MOVING;
+        HighlightNodesInRange(AreaMode.WALKING);
+    }
+
+    private void ShowFightArea()
+    {
+        if (TileGrid.Instance.SelectedCharacter != this)
+            return;
+
+        EventsManager.HideAllUI();
+        TileGrid.Instance.turnState = TurnState.ATTACKING;
+        HighlightNodesInRange(AreaMode.ATTACKING);
+    }
+
+    private void StartTurn()
+    {
+        if (TileGrid.Instance.SelectedCharacter != this)
+            return;
+
+        actionsLeft = 2;
         EventsManager.ShowControlledCharacterUI(this);
-        //HighlightNodesInRange(AreaMode.ATTACKING);
+
+        moved = false;
+        attacked = false;
+
+        EventsManager.toggleMoveBtn(true);
+        EventsManager.toggleAttackBtn(true);
+    }
+
+    private void UseAction()
+    {
+        actionsLeft--;
+    }
+
+    public void GainAction()
+    {
+        actionsLeft++;
+
+        if (!moved)
+        {
+            if(!attacked)
+                attacked = true;
+            else
+                moved = true;
+        }
+        else
+            moved = true;
+
+        if (actionsLeft > 2)
+            actionsLeft = 2;
+    }
+
+    private void CheckActionsLeft()
+    {
+        if (actionsLeft <= 0)
+        {
+            isChoosingDirection = true;
+            BeginChoosingDirection();
+        }
+        else
+        {
+            TileGrid.Instance.currentHighlightedNode = currentOccupiedNode;
+            currentOccupiedNode.PointNode();
+            EventsManager.ShowControlledCharacterUI(this);
+
+            if (actionsLeft == 1)
+            {
+                if (moved)
+                    EventsManager.toggleMoveBtn(false);
+                if (attacked)
+                    EventsManager.toggleAttackBtn(false);
+            }
+        }
     }
 
     private void CheckIfNextTileOccupied(NodeB currentNode, NodeB nextNode, NodeB nextNextNode)
@@ -340,7 +432,7 @@ public class Character : MonoBehaviour
                 highlightedNodes = TileGrid.Instance.GetAreaUtility(currentOccupiedNode, characterData.Move, team, characterData.Jump, false, false, false, AreaMode.WALKING).ToList();
                 break;
             case AreaMode.ATTACKING:
-                highlightedNodes = TileGrid.Instance.GetAreaUtility(currentOccupiedNode, characterData.Move, team, characterData.Jump, false, true, true, AreaMode.ATTACKING).ToList();
+                highlightedNodes = TileGrid.Instance.GetAreaUtility(currentOccupiedNode, 1, team, characterData.Jump, false, true, true, AreaMode.ATTACKING).ToList();
                 break;
         }
         
@@ -348,11 +440,9 @@ public class Character : MonoBehaviour
 
         foreach (NodeB node in highlightedNodes)
         {
-            node.HighlightNode(TileGrid.Instance.UnselectedTileColor);
+            node.HighlightNode(mode == AreaMode.WALKING ? TileGrid.Instance.UnselectedTileColor_Move : TileGrid.Instance.UnselectedTileColor_Attack);
         }
 
-        TileGrid.Instance.currentHighlightedNode = currentOccupiedNode;
-        currentOccupiedNode.PointNode();
         //Debug.Log("CurrentHighLightedNode: " + TileGrid.Instance.currentHighlightedNode.name);
     }
 
@@ -397,9 +487,7 @@ public class Character : MonoBehaviour
                 break;
         }
 
-        isChoosingDirection = false;
-
-        TileGrid.Instance.PassTurn();
+        StopChoosingDirection();
     }
     #endregion
 
@@ -413,6 +501,53 @@ public class Character : MonoBehaviour
             return;
 
         EventsManager.ShowControlledCharacterUI.Invoke(this);
+    }
+
+    private void AttackTarget(Character character)
+    {
+        if (TileGrid.Instance.SelectedCharacter != this)
+            return;
+
+        int dmgToGive = Mathf.Clamp(characterData.WeaponAtk - character.characterData.WeaponDef / 2, 1, 999);
+        character.TakeDamage(dmgToGive);
+        UseAction();
+        attacked = true;
+        CheckActionsLeft();
+        //EventsManager.StartDmgShow?.Invoke(dmgToGive);
+    }
+
+    public void BeginChoosingDirection()
+    {
+        if (TileGrid.Instance.SelectedCharacter != this)
+            return;
+
+        isChoosingDirection = true;
+        directionChooseMenu.SetActive(true);
+    }
+
+    public void StopChoosingDirection()
+    {
+        if (TileGrid.Instance.SelectedCharacter != this)
+            return;
+
+        isChoosingDirection = false;
+        directionChooseMenu.SetActive(false);
+
+        currentOccupiedNode.UnpointNode();
+        Debug.Log("passturn called by: " + this.name);
+        TileGrid.Instance.PassTurn();
+    }
+
+    public void TakeDamage(int dmg)
+    {
+        currentHp -= dmg;
+
+        if (currentHp <= 0)
+        {
+            currentHp = 0;
+            spriteManager.CharacterSprite.color = deadColor;
+            isDead = true;
+        }
     }
     #endregion
 }
@@ -429,7 +564,8 @@ public enum TurnState
 {
     WAITING,
     CHOOSING,
-    MOVING
+    MOVING,
+    ATTACKING
 }
 
 public enum Team
