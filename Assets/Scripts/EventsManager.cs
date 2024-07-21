@@ -15,6 +15,12 @@ public class EventsManager
     public static Action<NodeB[]> NodeClicked;
     public static Action TurnChanged;
     public static Action<CharacterDirection> DirectionChosen;
+
+    public static Action<Character> ShowControlledCharacterUI;
+    public static Action HideAllUI;
+    public static Action<Character> ShowTargetUI;
+    public static Action<Character, Character> ShowAttackUI;
+    public static Action ShowConformationUI;
     #endregion
 
     #endregion

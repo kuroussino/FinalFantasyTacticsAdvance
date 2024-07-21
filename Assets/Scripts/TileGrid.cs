@@ -18,6 +18,7 @@ public class TileGrid : Singleton<TileGrid>
     [SerializeField] Color unselectedTileColor;
     [SerializeField] Color selectedTileColor;
     [SerializeField] private LayerMask sampleMask;
+    [SerializeField] private LayerMask characterMask;
     [SerializeField] Camera mainCamera;
     [SerializeField] float cameraFollowDuration;
     [SerializeField] Character[] availableCharacters;
@@ -162,6 +163,8 @@ public class TileGrid : Singleton<TileGrid>
 
     private void UpdatePointedNode(Vector3 dir)
     {
+        NodeB oldNode = currentHighlightedNode;
+
         Debug.DrawRay(currentHighlightedNode.transform.position + dir * 2f + Vector3.up, Vector3.down, Color.red, 5f);
 
         if (Physics.Raycast(currentHighlightedNode.transform.position + dir * 2f + Vector3.up, Vector3.down, out RaycastHit hit, float.MaxValue, sampleMask))
@@ -181,6 +184,25 @@ public class TileGrid : Singleton<TileGrid>
             currentHighlightedNode.UnpointNode();
             currentHighlightedNode = hit0.collider.GetComponent<NodeB>();
             currentHighlightedNode.PointNode();
+        }
+
+        if (oldNode != currentHighlightedNode)
+        {
+            Character hitCharacter = null;
+            if (Physics.Raycast(currentHighlightedNode.transform.position, Vector3.up, out RaycastHit hit1, float.MaxValue, characterMask))
+            {
+                hitCharacter = hit1.collider.GetComponent<Character>();
+            }
+
+            if (hitCharacter != null)
+            {
+                if(hitCharacter != selectedCharacter)
+                    EventsManager.ShowTargetUI(hitCharacter);
+                else
+                    EventsManager.ShowControlledCharacterUI(selectedCharacter);
+            }
+            else
+                EventsManager.HideAllUI();
         }
     }
 

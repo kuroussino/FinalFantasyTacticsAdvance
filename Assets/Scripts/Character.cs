@@ -34,6 +34,10 @@ public class Character : MonoBehaviour
     CharacterDirection currentDirection;
     bool isWalking;
     bool isChoosingDirection;
+
+    [Header("Combat Stats")]
+    int currentHp;
+    int currentMp;
     #endregion
 
     #region Public
@@ -44,6 +48,8 @@ public class Character : MonoBehaviour
     public float Jump { get { return characterData.Jump; } }
     public bool IsChoosingDirection {  get { return isChoosingDirection; } }
     public int Team { get { return team; } }
+    public int CurrentHp { get { return currentHp; } }
+    public int CurentMp { get { return currentMp; } }
     #endregion
 
     #endregion
@@ -75,11 +81,11 @@ public class Character : MonoBehaviour
 
     private void OnEnable()
     {
-        
         EventsManager.NodeClicked += MoveTo;
         EventsManager.AllNodesRegistered += GetCurrentOccupiedNode;
         EventsManager.AllNodesRegisteredP2 += ShowWalkArea;
         EventsManager.AllNodesRegisteredP2 += SetSelfOccupationId;
+        EventsManager.AllNodesRegisteredP2 += InitializeCharacterStats;
         EventsManager.TurnChanged += GetCurrentOccupiedNode;
         EventsManager.TurnChanged += ShowWalkArea;
         EventsManager.DirectionChosen += EndTurnDirectionChange;
@@ -91,6 +97,7 @@ public class Character : MonoBehaviour
         EventsManager.AllNodesRegistered -= GetCurrentOccupiedNode;
         EventsManager.AllNodesRegisteredP2 -= ShowWalkArea;
         EventsManager.AllNodesRegisteredP2 -= SetSelfOccupationId;
+        EventsManager.AllNodesRegisteredP2 -= InitializeCharacterStats;
         EventsManager.TurnChanged -= GetCurrentOccupiedNode;
         EventsManager.TurnChanged -= ShowWalkArea;
         EventsManager.DirectionChosen -= EndTurnDirectionChange;
@@ -251,6 +258,11 @@ public class Character : MonoBehaviour
     private void ShowWalkArea()
     {
         HighlightNodesInRange(AreaMode.WALKING);
+
+        if (TileGrid.Instance.SelectedCharacter != this)
+            return;
+
+        EventsManager.ShowControlledCharacterUI(this);
         //HighlightNodesInRange(AreaMode.ATTACKING);
     }
 
@@ -388,6 +400,19 @@ public class Character : MonoBehaviour
         isChoosingDirection = false;
 
         TileGrid.Instance.PassTurn();
+    }
+    #endregion
+
+    #region Combat & UI
+    private void InitializeCharacterStats()
+    {
+        currentHp = characterData.BaseMaxHp * characterData.Lvl;
+        currentMp = characterData.BaseMaxMp * characterData.Lvl;
+
+        if (TileGrid.Instance.SelectedCharacter != this)
+            return;
+
+        EventsManager.ShowControlledCharacterUI.Invoke(this);
     }
     #endregion
 }
